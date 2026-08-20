@@ -5,6 +5,12 @@ import { Memory } from "@/components/landing/memory";
 import { HumanAI } from "@/components/landing/human-ai";
 import { CTA } from "@/components/landing/cta";
 import { Footer } from "@/components/layout/footer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Build with Context, Not Chaos",
+  description: "aisitey helps you turn ideas into real products with AI that understands your project context, architecture, and decisions.",
+};
 
 export default function Home() {
   return (
