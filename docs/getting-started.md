@@ -13,86 +13,79 @@ npm install -g aisitey
 ```
 
 ## Create Your First Project
-````bash
+
+```bash
 aisitey init
-````
+```
 
 Follow the prompts:
 
-1.Enter your project name
+1. Enter your project name
+2. Select your tech stack
+3. Choose whether to create a new folder
 
-2.Select your tech stack
+This creates a `.aisitey` folder with seven context files.
 
-3.Choose whether to create a new folder
+## Fill in Your Context Files
 
-This creates a .aisitey folder with seven context files.
+### 1. Project Overview
 
-# Fill in Your Context Files
-## 1. Project Overview
-Open .aisitey/project-overview.md and define:
+Open `.aisitey/project-overview.md` and define:
 
-What your project does
+- What your project does
+- Your goals
+- Core user flow
+- Features
+- What's in scope and out of scope
 
-Your goals
+### 2. Architecture
 
-Core user flow
+Open `.aisitey/architecture.md` and specify:
 
-Features
+- Tech stack
+- System boundaries
+- Data model
+- Domain entities
 
-What's in scope and out of scope
+### 3. UI Context
 
-## 2. Architecture
-Open .aisitey/architecture.md and specify:
+Open `.aisitey/ui-context.md` and define:
 
-Tech stack
+- Design tokens
+- Typography
+- Layout patterns
 
-System boundaries
+### 4. Code Standards
 
-Data model
+Open `.aisitey/code-standards.md` and set:
 
-Domain entities
+- Coding conventions
+- Validation rules
+- Error handling
 
-## 3. UI Context
-Open .aisitey/ui-context.md and define:
+### 5. AI Workflow Rules
 
-Design tokens
+Open `.aisitey/ai-workflow-rules.md` and control:
 
-Typography
-
-Layout patterns
-
-## 4. Code Standards
-Open .aisitey/code-standards.md and set:
-
-Coding conventions
-
-Validation rules
-
-Error handling
-
-## 5. AI Workflow Rules
-Open .aisitey/ai-workflow-rules.md and control:
-
-How AI should work
-
-What AI can't change
-
-Implementation order
+- How AI should work
+- What AI can't change
+- Implementation order
 
 ## Start Building with AI
+
 Once your context files are filled in, give them to your AI agent:
-````bash
+
+```bash
 "Read the .aisitey folder and build the project according to the context files."
-````
+```
 
-# Next Steps
-Check How It Works for detailed explanation
+## Next Steps
 
-Browse Templates for ready-made contexts
+- Check [How It Works](how-it-works.md) for a detailed explanation
+- Browse [Templates](templates.md) for ready-made contexts
+- Join the community on GitHub
 
-Join the community on GitHub
+## Need Help?
 
-# Need Help?
-GitHub Issues: https://github.com/WalaaMoFekry/aisitey/issues
-
-Website: https://aisitey.com
+- GitHub Issues: https://github.com/WalaaMoFekry/aisitey/issues
+- Website: https://aisitey.com
