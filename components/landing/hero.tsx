@@ -1,3 +1,4 @@
+// components/landing/hero.tsx
 import Link from "next/link";
 
 export function Hero() {
@@ -7,52 +8,48 @@ export function Hero() {
         {/* Eyebrow */}
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-default bg-surface px-4 py-2 text-sm text-copy-secondary">
           <span className="h-2 w-2 rounded-full bg-ai" />
-          AI-powered development system
+          Context-driven AI development system
         </div>
 
         {/* Heading */}
         <h1 className="mx-auto max-w-4xl text-5xl font-semibold tracking-tight text-copy-primary sm:text-6xl md:text-7xl">
-          Turn your ideas into{" "}
-          <span className="text-brand">real products.</span>
+          Build with{" "}
+          <span className="text-brand">context</span>,
+          <br />
+          not chaos.
         </h1>
 
         {/* Description */}
         <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-copy-secondary">
-          aisitey helps you turn an idea into a working web product while
-          keeping your project context, architecture, and decisions connected.
+          aisitey gives your AI agents a complete project memory — context,
+          architecture, standards, and workflow rules. So they build exactly
+          what you need, nothing more, nothing less.
         </p>
 
-        {/* Prompt Box */}
-        <div className="mx-auto mt-10 max-w-3xl rounded-3xl border border-default bg-surface p-3 shadow-sm">
-          <div className="rounded-2xl bg-subtle p-5 text-left">
-            <p className="mb-4 text-sm text-copy-muted">
-              What do you want to build?
-            </p>
+        {/* CTA Buttons */}
+        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <Link
+            href="#how-it-works"
+            className="rounded-xl bg-brand px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
+          >
+            See How It Works →
+          </Link>
 
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-              <div className="flex-1 text-base text-copy-secondary">
-                Build a modern SaaS platform for...
-              </div>
-
-              <Link
-                href="#start"
-                className="rounded-xl bg-brand px-5 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-brand-dark"
-              >
-                Build with AI →
-              </Link>
-            </div>
-          </div>
+          <Link
+            href="#memory"
+            className="rounded-xl border border-default bg-surface px-6 py-3 text-sm font-medium text-copy-primary transition-colors hover:border-brand/30 hover:text-brand"
+          >
+            View Project Memory
+          </Link>
         </div>
 
         {/* Flow */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3 text-sm text-copy-muted">
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-3 text-sm text-copy-muted">
           <span>Idea</span>
           <span>→</span>
-          <span>Context</span>
+          <span>Context Files</span>
           <span>→</span>
-          <span>Architecture</span>
-          <span>→</span>
-          <span>AI</span>
+          <span>AI Agent</span>
           <span>→</span>
           <span className="font-medium text-brand">Product</span>
         </div>

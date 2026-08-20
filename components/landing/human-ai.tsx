@@ -1,24 +1,25 @@
+// components/landing/human-ai.tsx
 const roles = [
   {
     title: "You",
-    subtitle: "Direction & Creativity",
+    subtitle: "Direction & Decisions",
     items: [
-      "Define the idea",
-      "Choose the product direction",
-      "Make design and UX decisions",
-      "Review and change the result",
+      "Write project context and scope",
+      "Define architecture and standards",
+      "Make product and UX decisions",
+      "Review and approve AI output",
     ],
     className: "border-default bg-surface",
     badgeClass: "bg-brand-soft text-brand",
   },
   {
     title: "AI",
-    subtitle: "Execution & Assistance",
+    subtitle: "Execution & Consistency",
     items: [
-      "Turn decisions into code",
-      "Handle repetitive work",
-      "Connect APIs and systems",
-      "Suggest and improve solutions",
+      "Reads context files before building",
+      "Follows scope without inventing features",
+      "Maintains architecture boundaries",
+      "Updates memory and progress files",
     ],
     className: "border-brand/20 bg-brand-soft",
     badgeClass: "bg-white text-brand",
@@ -40,8 +41,8 @@ export function HumanAI() {
           </h2>
 
           <p className="mt-5 text-lg leading-8 text-copy-secondary">
-            AI should amplify human creativity and decision-making, not
-            replace it.
+            AI follows your context. You make the decisions. The system keeps
+            everything connected.
           </p>
         </div>
 
@@ -83,11 +84,12 @@ export function HumanAI() {
         {/* Statement */}
         <div className="mt-10 rounded-3xl border border-default bg-surface p-8 text-center">
           <p className="text-lg font-medium text-copy-primary">
-            Better tools don't remove people from the process.
+            Context is written once. AI follows it every time.
           </p>
 
           <p className="mt-2 text-base text-copy-secondary">
-            They give people more time to think, create, and build.
+            You focus on what to build. AI handles how to build it — within
+            your rules.
           </p>
         </div>
       </div>

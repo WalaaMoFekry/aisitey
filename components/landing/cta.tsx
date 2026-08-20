@@ -1,3 +1,4 @@
+// components/landing/cta.tsx
 import Link from "next/link";
 
 export function CTA() {
@@ -15,30 +16,30 @@ export function CTA() {
             </span>
 
             <h2 className="mx-auto mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-copy-primary md:text-5xl">
-              Have an idea?
-              <br />
-              Let's build it with context.
+              Ready to build with context?
             </h2>
 
             <p className="mx-auto mt-6 max-w-xl text-base leading-7 text-copy-secondary md:text-lg">
-              Turn your idea into a structured product and use AI to move
-              faster without losing control of the decisions that matter.
+              Get the seven context files that will change how you work with
+              AI agents. Free and open source.
             </p>
 
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
-                href="#hero"
+                href="#memory"
                 className="rounded-xl bg-brand px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
               >
-                Start Building →
+                View the Files →
               </Link>
 
-              <Link
-                href="#how-it-works"
+              <a
+                href="https://github.com/WalaaMoFekry/aisitey"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="rounded-xl border border-default bg-surface px-6 py-3 text-sm font-medium text-copy-primary transition-colors hover:border-brand/30 hover:text-brand"
               >
-                See How It Works
-              </Link>
+                Get on GitHub
+              </a>
             </div>
           </div>
         </div>

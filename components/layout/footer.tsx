@@ -1,3 +1,4 @@
+// components/layout/footer.tsx
 import Link from "next/link";
 
 export function Footer() {
@@ -15,7 +16,8 @@ export function Footer() {
             </Link>
 
             <p className="mt-2 max-w-sm text-sm leading-6 text-copy-muted">
-              A context-driven system for building better products with AI.
+              Build with context, not chaos. A structured system for
+              AI-driven development.
             </p>
           </div>
 
@@ -42,14 +44,23 @@ export function Footer() {
               Human + AI
             </Link>
 
-            <Link
-              href="https://github.com/WalaaMoFekry"
+            <a
+              href="https://github.com/WalaaMoFekry/aisitey"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-copy-secondary transition-colors hover:text-brand"
             >
               GitHub
-            </Link>
+            </a>
+
+            <a
+              href="https://www.npmjs.com/package/aisitey"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-copy-secondary transition-colors hover:text-brand"
+            >
+              npm
+            </a>
           </div>
         </div>
 
@@ -57,7 +68,18 @@ export function Footer() {
         <div className="mt-10 flex flex-col gap-3 border-t border-default pt-6 text-sm text-copy-muted sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} aisitey.com All rights reserved.</p>
 
-          <p>Built with AI. Directed by humans.</p>
+          <div className="flex gap-4">
+            <p>Built with AI. Directed by humans.</p>
+            <span className="hidden sm:inline">•</span>
+            <a
+              href="https://github.com/WalaaMoFekry/aisitey"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-brand"
+            >
+              Open Source
+            </a>
+          </div>
         </div>
       </div>
     </footer>

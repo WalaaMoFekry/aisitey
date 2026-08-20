@@ -1,18 +1,46 @@
-const memoryItems = [
+// components/landing/memory.tsx
+const contextFiles = [
   {
-    title: "Project Context",
+    name: "project-overview.md",
+    role: "What you're building",
     description:
-      "Your product requirements, goals, and important context stay connected throughout development.",
+      "Goals, core user flow, features, and scope. The source of truth for what's in and out.",
   },
   {
-    title: "Technical Decisions",
+    name: "architecture.md",
+    role: "How it's built",
     description:
-      "Architecture and technical decisions remain part of the project instead of disappearing after each task.",
+      "Tech stack, system boundaries, data model, and domain entities. No guessing allowed.",
   },
   {
-    title: "Reusable Skills",
+    name: "ui-context.md",
+    role: "How it looks",
     description:
-      "Define reusable skills and rules that guide AI to work consistently across your product.",
+      "Design tokens, typography, layout patterns, and component rules.",
+  },
+  {
+    name: "code-standards.md",
+    role: "How code is written",
+    description:
+      "Coding conventions, validation rules, error handling, and file organization.",
+  },
+  {
+    name: "ai-workflow-rules.md",
+    role: "How AI works",
+    description:
+      "Scoping rules, implementation order, and protected decisions AI can't change.",
+  },
+  {
+    name: "memory.md",
+    role: "What was decided",
+    description:
+      "Important decisions, domain rules, and implementation knowledge that persists.",
+  },
+  {
+    name: "progress-tracker.md",
+    role: "Where you are",
+    description:
+      "Current phase, completed work, and next steps. Updated constantly.",
   },
 ];
 
@@ -31,63 +59,57 @@ export function Memory() {
           </h2>
 
           <p className="mt-5 text-lg leading-8 text-copy-secondary">
-            AI works better when it understands the project beyond the current
-            prompt.
+            Seven context files work together to give AI agents complete
+            project knowledge — before a single line of code is written.
           </p>
         </div>
 
-        {/* Memory visualization */}
+        {/* File structure visualization */}
         <div className="mx-auto mt-16 max-w-4xl rounded-3xl border border-default bg-surface p-6 shadow-sm md:p-8">
           <div className="rounded-2xl bg-subtle p-6 md:p-8">
-            <div className="flex flex-col items-center gap-6 md:flex-row md:justify-center">
-              <div className="rounded-2xl border border-default bg-surface px-6 py-5 text-center">
-                <p className="text-sm text-copy-muted">Your Project</p>
+            <div className="flex items-center gap-2 text-sm text-copy-muted mb-6">
+              <span>📁</span>
+              <span>.aisitey/</span>
+            </div>
 
-                <p className="mt-1 font-semibold text-copy-primary">
-                  Context
-                </p>
-              </div>
-
-              <div className="text-xl text-brand">→</div>
-
-              <div className="rounded-2xl border border-brand/20 bg-brand-soft px-6 py-5 text-center">
-                <p className="text-sm text-brand">aisitey</p>
-
-                <p className="mt-1 font-semibold text-brand">
-                  Project Memory
-                </p>
-              </div>
-
-              <div className="text-xl text-brand">→</div>
-
-              <div className="rounded-2xl border border-default bg-surface px-6 py-5 text-center">
-                <p className="text-sm text-copy-muted">AI</p>
-
-                <p className="mt-1 font-semibold text-copy-primary">
-                  Better Decisions
-                </p>
-              </div>
+            <div className="space-y-2">
+              {contextFiles.map((file) => (
+                <div
+                  key={file.name}
+                  className="flex items-center gap-3 rounded-xl border border-default bg-surface px-4 py-3"
+                >
+                  <span className="text-sm">📄</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-copy-primary">
+                      {file.name}
+                    </p>
+                    <p className="text-xs text-copy-muted">{file.role}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Memory cards */}
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {memoryItems.map((item) => (
+        {/* Context cards */}
+        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {contextFiles.map((file) => (
             <div
-              key={item.title}
+              key={file.name}
               className="rounded-3xl border border-default bg-surface p-7"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand">
-                ✦
+                📄
               </div>
 
-              <h3 className="mt-6 text-lg font-semibold text-copy-primary">
-                {item.title}
+              <h3 className="mt-6 font-mono text-sm font-semibold text-copy-primary">
+                {file.name}
               </h3>
 
+              <p className="mt-2 text-sm font-medium text-brand">{file.role}</p>
+
               <p className="mt-3 text-sm leading-6 text-copy-secondary">
-                {item.description}
+                {file.description}
               </p>
             </div>
           ))}
@@ -96,7 +118,7 @@ export function Memory() {
         {/* Bottom statement */}
         <div className="mt-12 text-center">
           <p className="text-base text-copy-muted">
-            One project. One connected context. Better AI collaboration.
+            One project. Seven files. Complete context for any AI agent.
           </p>
         </div>
       </div>

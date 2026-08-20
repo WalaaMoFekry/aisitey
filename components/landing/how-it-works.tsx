@@ -1,39 +1,40 @@
+// components/landing/how-it-works.tsx
 const steps = [
   {
     number: "01",
-    title: "Start with an idea",
+    title: "Write your context",
     description:
-      "Describe what you want to build and define the problem your product should solve.",
+      "Define your project overview, goals, core user flow, and scope in structured markdown files.",
   },
   {
     number: "02",
-    title: "Build the context",
+    title: "Define architecture",
     description:
-      "Turn your idea into structured project context, requirements, decisions, and goals.",
+      "Specify your tech stack, system boundaries, data model, and domain entities before writing code.",
   },
   {
     number: "03",
-    title: "Design the architecture",
+    title: "Set standards",
     description:
-      "Define the product structure, technical approach, data flow, and architecture before building.",
+      "Create coding standards, UI rules, and workflow guidelines that keep AI consistent.",
   },
   {
     number: "04",
-    title: "Let AI build with context",
+    title: "Let AI build",
     description:
-      "AI uses the project context and defined skills to help turn decisions into working software.",
+      "AI agents read your context files and build exactly what's in scope — no guessing, no surprises.",
   },
   {
     number: "05",
-    title: "Review and improve",
+    title: "Track everything",
     description:
-      "Keep the human in control. Review the result, change the direction, and improve the product.",
+      "Every decision, update, and change stays in memory and progress files as project knowledge.",
   },
   {
     number: "06",
-    title: "Ship the product",
+    title: "Ship with confidence",
     description:
-      "Move from an idea to a real, maintainable product that can continue evolving.",
+      "Any AI agent can pick up where another left off. Your project remembers everything.",
   },
 ];
 
@@ -48,12 +49,13 @@ export function HowItWorks() {
           </span>
 
           <h2 className="mt-4 text-4xl font-semibold tracking-tight text-copy-primary md:text-5xl">
-            From idea to product.
+            From chaos to context.
           </h2>
 
           <p className="mt-5 text-lg leading-8 text-copy-secondary">
-            A structured development flow that keeps your idea, decisions,
-            architecture, and AI working together.
+            Seven structured files turn your idea into a system that AI agents
+            can follow precisely — without inventing, forgetting, or expanding
+            scope on their own.
           </p>
         </div>
 
@@ -88,11 +90,11 @@ export function HowItWorks() {
         {/* Bottom statement */}
         <div className="mt-12 rounded-3xl border border-brand/20 bg-brand-soft px-8 py-10 text-center">
           <p className="text-lg font-medium text-brand md:text-xl">
-            The goal isn't to generate more code.
+            Stop explaining your project from scratch every session.
           </p>
 
           <p className="mt-2 text-base text-copy-secondary">
-            It's to build better products with better context.
+            Write it once. Let any AI agent build from the same context.
           </p>
         </div>
       </div>

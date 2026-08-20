@@ -1,3 +1,4 @@
+// components/layout/navbar.tsx
 "use client";
 
 import Link from "next/link";
@@ -17,12 +18,9 @@ export function Navbar() {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // لو المستخدم نازل لتحت والـ scroll أكبر من 100px، اخفي الـ navbar
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
         setIsVisible(false);
-      } 
-      // لو المستخدم طالع لفوق، أظهر الـ navbar
-      else {
+      } else {
         setIsVisible(true);
       }
 
@@ -39,8 +37,8 @@ export function Navbar() {
   return (
     <nav
       className={`fixed left-1/2 top-4 z-50 w-[calc(100%-1.5rem)] max-w-5xl -translate-x-1/2 transition-all duration-300 ${
-        isVisible 
-          ? "translate-y-0 opacity-100" 
+        isVisible
+          ? "translate-y-0 opacity-100"
           : "-translate-y-24 opacity-0 pointer-events-none"
       }`}
     >
@@ -66,7 +64,7 @@ export function Navbar() {
           ))}
 
           <Link
-            href="https://github.com"
+            href="https://github.com/WalaaMoFekry/aisitey"
             target="_blank"
             rel="noopener noreferrer"
             className="shrink-0 text-sm text-copy-secondary transition-colors hover:text-brand"
@@ -80,7 +78,7 @@ export function Navbar() {
           href="#start"
           className="ml-4 hidden shrink-0 rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark sm:block"
         >
-          Start Building
+          Get Started
         </Link>
       </div>
     </nav>
