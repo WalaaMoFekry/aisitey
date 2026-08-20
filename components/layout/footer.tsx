@@ -54,13 +54,13 @@ export function Footer() {
             </a>
 
             <a
-              href="https://www.npmjs.com/package/aisitey"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-copy-secondary transition-colors hover:text-brand"
-            >
-              npm
-            </a>
+  href="https://www.npmjs.com/package/aisitey"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="text-sm font-bold text-red-500 transition-colors hover:text-red-600"
+>
+  npm
+</a>
           </div>
         </div>
 

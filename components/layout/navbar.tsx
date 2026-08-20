@@ -1,4 +1,3 @@
-// components/layout/navbar.tsx
 "use client";
 
 import Link from "next/link";
@@ -71,6 +70,16 @@ export function Navbar() {
           >
             GitHub
           </Link>
+
+          {/* npm بالأحمر */}
+          <a
+  href="https://www.npmjs.com/package/aisitey"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="shrink-0 text-sm font-bold text-red-500 transition-colors hover:text-red-600"
+>
+  npm
+</a>
         </div>
 
         {/* CTA */}
