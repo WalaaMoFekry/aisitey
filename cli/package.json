@@ -22,6 +22,7 @@
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
+    "@inquirer/prompts": "^8.6.0",
     "chalk": "^6.0.0",
     "commander": "^15.0.0",
     "fs-extra": "^11.4.0",

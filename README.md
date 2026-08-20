@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# aisitey
 
-## Getting Started
+Build with context, not chaos.
 
-First, run the development server:
+aisitey is a context-driven development system that helps you build better products with AI agents. It provides structured context files that guide AI to build exactly what you need — nothing more, nothing less.
+
+## 🚀 Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# Install the CLI
+npm install -g aisitey
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# Initialize a new project
+aisitey init
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# List available templates
+aisitey list
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Check project status
+aisitey status
 
-## Learn More
+📁 Project Structure
+When you run aisitey init, it creates a .aisitey folder with seven context files:
+.aisitey/
+├── project-overview.md    # What you're building
+├── architecture.md        # How it's built
+├── ui-context.md         # How it looks
+├── code-standards.md     # How code is written
+├── ai-workflow-rules.md  # How AI works
+├── memory.md             # What was decided
+└── progress-tracker.md   # Where you are
 
-To learn more about Next.js, take a look at the following resources:
+📖 Documentation
+Getting Started
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+How It Works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Templates
 
-## Deploy on Vercel
+🌐 Links
+Website: aisitey.com
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+GitHub: github.com/WalaaMoFekry/aisitey
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+npm: npmjs.com/package/aisitey
+
+👩‍💻 Author
+Walaa MoFekry
+
+GitHub: @WalaaMoFekry
+
+Built with AI. Directed by humans. 🚀
+"@ | Out-File -FilePath README.md -Encoding utf8
+

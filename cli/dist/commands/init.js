@@ -1,15 +1,83 @@
-import chalk from 'chalk';
-
-export interface Template {
-  name: string;
-  type: 'context' | 'skill';
-  description: string;
-  content: string;
-  premium?: boolean;
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.initProject = initProject;
+const prompts_1 = require("@inquirer/prompts");
+const fs_extra_1 = __importDefault(require("fs-extra"));
+const path_1 = __importDefault(require("path"));
+const chalk_1 = __importDefault(require("chalk"));
+const ora_1 = __importDefault(require("ora"));
+async function initProject() {
+    console.log(chalk_1.default.bold('\n🚀 Welcome to aisitey!\n'));
+    console.log(chalk_1.default.gray('Build with context, not chaos.\n'));
+    try {
+        const projectName = await (0, prompts_1.input)({
+            message: 'What is your project name?',
+            validate: (value) => {
+                if (value.length < 2) {
+                    return 'Project name must be at least 2 characters';
+                }
+                return true;
+            },
+        });
+        const techStack = await (0, prompts_1.select)({
+            message: 'What is your tech stack?',
+            choices: [
+                { name: 'Next.js + TypeScript', value: 'nextjs' },
+                { name: 'Vue 3 + TypeScript', value: 'vue' },
+                { name: 'React + TypeScript', value: 'react' },
+                { name: 'Laravel', value: 'laravel' },
+                { name: 'Flutter', value: 'flutter' },
+                { name: 'Custom', value: 'custom' },
+            ],
+        });
+        const createFolder = await (0, prompts_1.confirm)({
+            message: 'Create a new folder for this project?',
+            default: true,
+        });
+        const spinner = (0, ora_1.default)('Creating project structure...').start();
+        const projectPath = createFolder
+            ? path_1.default.join(process.cwd(), projectName)
+            : process.cwd();
+        // Create .aisitey folder
+        await fs_extra_1.default.ensureDir(path_1.default.join(projectPath, '.aisitey'));
+        // Create all template files
+        const templates = [
+            'project-overview',
+            'architecture',
+            'ui-context',
+            'code-standards',
+            'ai-workflow-rules',
+            'memory',
+            'progress-tracker',
+        ];
+        for (const template of templates) {
+            const content = getTemplateContent(template, projectName, techStack);
+            await fs_extra_1.default.writeFile(path_1.default.join(projectPath, '.aisitey', `${template}.md`), content);
+        }
+        spinner.succeed(chalk_1.default.green('Project initialized successfully!'));
+        console.log('\n📁 Created files:');
+        console.log(chalk_1.default.gray(`  ${projectName}/`));
+        console.log(chalk_1.default.gray('  └── .aisitey/'));
+        templates.forEach((template) => {
+            console.log(chalk_1.default.gray(`      ├── ${template}.md`));
+        });
+        console.log('\n✨ Next steps:');
+        console.log(chalk_1.default.blue(`  1. cd ${projectName}`));
+        console.log(chalk_1.default.blue('  2. Edit your project-overview.md'));
+        console.log(chalk_1.default.blue('  3. Define your architecture'));
+        console.log(chalk_1.default.blue('  4. Start building with AI'));
+    }
+    catch (error) {
+        console.log(chalk_1.default.red('\n❌ Operation cancelled'));
+        process.exit(0);
+    }
 }
-
-const basicTemplates: Record<string, string> = {
-  'project-overview': `# [Project Name]
+function getTemplateContent(template, projectName, techStack) {
+    const templates = {
+        'project-overview': `# ${projectName}
 
 ## Overview
 
@@ -49,15 +117,15 @@ who it's for, and what problem it solves.
 1. Condition one
 2. Condition two
 `,
-  'architecture': `# Architecture Context
+        'architecture': `# Architecture Context
 
 ## Stack
 
 | Layer | Technology | Role |
 | --- | --- | --- |
-| Framework | [e.g. Next.js + TypeScript] | [what it's responsible for] |
-| UI | [e.g. Tailwind + shadcn/ui] | [what it's responsible for] |
-| Database | [e.g. Prisma + PostgreSQL] | [what it's responsible for] |
+| Framework | ${techStack} | Application framework |
+| UI | [UI library] | User interface |
+| Database | [Database] | Data storage |
 
 ## System Boundaries
 
@@ -91,13 +159,6 @@ Related to:
 - Users authenticate through [provider].
 - Protected routes require authentication.
 
-## Status Model
-
-### Entity Status
-Possible states:
-- \`STATE_ONE\`
-- \`STATE_TWO\`
-
 ## Data Integrity Rules
 
 1. Every [entity] belongs to an authenticated user.
@@ -108,7 +169,7 @@ Possible states:
 1. Client components never access the database directly.
 2. Authentication is enforced on every protected server operation.
 `,
-  'ui-context': `# UI Context
+        'ui-context': `# UI Context
 
 ## Theme
 
@@ -124,9 +185,9 @@ Describe the overall visual direction.
 
 ## Typography
 
-| Role | Font | CSS Variable |
-| --- | --- | --- |
-| UI text | [font] | \`--font-______\` |
+| Role | Font |
+| --- | --- |
+| UI text | [font] |
 
 ## Border Radius
 
@@ -139,25 +200,12 @@ Describe the overall visual direction.
 
 [e.g. shadcn/ui on top of Tailwind]
 
-## Layout Patterns
-
-### Application Shell
-- [e.g. Left sidebar for navigation]
-
-## Buttons and Actions
-
-- Primary actions use [rule].
-
-## Icons
-
-[Library] [Style]
-
 ## Accessibility
 
 - Maintain readable contrast.
 - Never communicate status through color alone.
 `,
-  'code-standards': `# Code Standards
+        'code-standards': `# Code Standards
 
 ## General
 
@@ -165,10 +213,10 @@ Describe the overall visual direction.
 - Fix root causes — do not layer workarounds.
 - Prefer readable code over clever code.
 
-## TypeScript
+## ${techStack}
 
 - Strict mode is required throughout the project.
-- Avoid \`any\`; use explicit types.
+- Use explicit types.
 
 ## Components / UI Code
 
@@ -185,15 +233,6 @@ Describe the overall visual direction.
 - Treat all external input as untrusted.
 - Validate at system boundaries.
 
-## Business Logic
-
-- Business rules live in server-side application modules.
-
-## Database
-
-- All database access goes through [ORM/client].
-- Always verify ownership before mutations.
-
 ## Error Handling
 
 - Handle expected errors explicitly.
@@ -206,11 +245,11 @@ Describe the overall visual direction.
 3. Verify authentication and authorization.
 4. Verify loading, empty, and error states.
 `,
-  'ai-workflow-rules': `# AI Workflow Rules
+        'ai-workflow-rules': `# AI Workflow Rules
 
 ## Approach
 
-Build [Project Name] incrementally using spec-driven development.
+Build ${projectName} incrementally using spec-driven development.
 
 ## Scoping Rules
 
@@ -248,11 +287,12 @@ The AI coding agent must not silently change:
 3. Authentication and access rules are enforced.
 4. Loading, empty, error, and success states are handled.
 `,
-  'memory': `# Project Memory
+        'memory': `# Project Memory
 
 ## Project Identity
 
-- Project name: [Name]
+- Project name: ${projectName}
+- Tech stack: ${techStack}
 - Product type: [one line]
 - Primary users: [who]
 - Primary goal: [one line]
@@ -264,7 +304,7 @@ The AI coding agent must not silently change:
 
 ## Technology Decisions
 
-### [Technology]
+### ${techStack}
 [Reason it was chosen.]
 
 ## Domain Decisions
@@ -298,7 +338,7 @@ The AI coding agent must not silently change:
 
 - [idea]
 `,
-  'progress-tracker': `# Progress Tracker
+        'progress-tracker': `# Progress Tracker
 
 ## Current Phase
 
@@ -328,28 +368,6 @@ The AI coding agent must not silently change:
 
 - [Context needed to resume work in the next session]
 `,
-};
-
-export function getTemplateContent(templateName: string, projectName?: string): string {
-  const content = basicTemplates[templateName];
-  
-  if (!content) {
-    console.log(chalk.red(`Template not found: ${templateName}`));
-    console.log(chalk.gray('Run: aisitey list to see available templates'));
-    return '';
-  }
-
-  if (projectName) {
-    return content.replace(/\[Project Name\]/g, projectName);
-  }
-
-  return content;
-}
-
-export function getAvailableContexts(): string[] {
-  return Object.keys(basicTemplates);
-}
-
-export function isContextTemplate(name: string): boolean {
-  return basicTemplates.hasOwnProperty(name);
+    };
+    return templates[template] || '';
 }

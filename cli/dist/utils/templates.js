@@ -1,15 +1,14 @@
-import chalk from 'chalk';
-
-export interface Template {
-  name: string;
-  type: 'context' | 'skill';
-  description: string;
-  content: string;
-  premium?: boolean;
-}
-
-const basicTemplates: Record<string, string> = {
-  'project-overview': `# [Project Name]
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getTemplateContent = getTemplateContent;
+exports.getAvailableContexts = getAvailableContexts;
+exports.isContextTemplate = isContextTemplate;
+const chalk_1 = __importDefault(require("chalk"));
+const basicTemplates = {
+    'project-overview': `# [Project Name]
 
 ## Overview
 
@@ -49,7 +48,7 @@ who it's for, and what problem it solves.
 1. Condition one
 2. Condition two
 `,
-  'architecture': `# Architecture Context
+    'architecture': `# Architecture Context
 
 ## Stack
 
@@ -108,7 +107,7 @@ Possible states:
 1. Client components never access the database directly.
 2. Authentication is enforced on every protected server operation.
 `,
-  'ui-context': `# UI Context
+    'ui-context': `# UI Context
 
 ## Theme
 
@@ -157,7 +156,7 @@ Describe the overall visual direction.
 - Maintain readable contrast.
 - Never communicate status through color alone.
 `,
-  'code-standards': `# Code Standards
+    'code-standards': `# Code Standards
 
 ## General
 
@@ -206,7 +205,7 @@ Describe the overall visual direction.
 3. Verify authentication and authorization.
 4. Verify loading, empty, and error states.
 `,
-  'ai-workflow-rules': `# AI Workflow Rules
+    'ai-workflow-rules': `# AI Workflow Rules
 
 ## Approach
 
@@ -248,7 +247,7 @@ The AI coding agent must not silently change:
 3. Authentication and access rules are enforced.
 4. Loading, empty, error, and success states are handled.
 `,
-  'memory': `# Project Memory
+    'memory': `# Project Memory
 
 ## Project Identity
 
@@ -298,7 +297,7 @@ The AI coding agent must not silently change:
 
 - [idea]
 `,
-  'progress-tracker': `# Progress Tracker
+    'progress-tracker': `# Progress Tracker
 
 ## Current Phase
 
@@ -329,27 +328,21 @@ The AI coding agent must not silently change:
 - [Context needed to resume work in the next session]
 `,
 };
-
-export function getTemplateContent(templateName: string, projectName?: string): string {
-  const content = basicTemplates[templateName];
-  
-  if (!content) {
-    console.log(chalk.red(`Template not found: ${templateName}`));
-    console.log(chalk.gray('Run: aisitey list to see available templates'));
-    return '';
-  }
-
-  if (projectName) {
-    return content.replace(/\[Project Name\]/g, projectName);
-  }
-
-  return content;
+function getTemplateContent(templateName, projectName) {
+    const content = basicTemplates[templateName];
+    if (!content) {
+        console.log(chalk_1.default.red(`Template not found: ${templateName}`));
+        console.log(chalk_1.default.gray('Run: aisitey list to see available templates'));
+        return '';
+    }
+    if (projectName) {
+        return content.replace(/\[Project Name\]/g, projectName);
+    }
+    return content;
 }
-
-export function getAvailableContexts(): string[] {
-  return Object.keys(basicTemplates);
+function getAvailableContexts() {
+    return Object.keys(basicTemplates);
 }
-
-export function isContextTemplate(name: string): boolean {
-  return basicTemplates.hasOwnProperty(name);
+function isContextTemplate(name) {
+    return basicTemplates.hasOwnProperty(name);
 }
