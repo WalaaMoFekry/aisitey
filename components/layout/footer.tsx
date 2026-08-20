@@ -16,8 +16,8 @@ export function Footer() {
             </Link>
 
             <p className="mt-2 max-w-sm text-sm leading-6 text-copy-muted">
-              Build with context, not chaos. A structured system for
-              AI-driven development.
+              Build with context, not chaos. A structured system for AI-driven
+              development.
             </p>
           </div>
 
@@ -54,13 +54,13 @@ export function Footer() {
             </a>
 
             <a
-  href="https://www.npmjs.com/package/aisitey"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="text-sm font-bold text-red-500 transition-colors hover:text-red-600"
->
-  npm
-</a>
+              href="https://www.npmjs.com/package/aisitey"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-bold text-red-500 transition-colors hover:text-red-600"
+            >
+              npm
+            </a>
           </div>
         </div>
 

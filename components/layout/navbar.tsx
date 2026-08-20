@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
+import Image from "next/image";
 
 const links = [
   { label: "How it works", href: "#how-it-works" },
@@ -12,6 +14,7 @@ const links = [
 export function Navbar() {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const { isSignedIn } = useUser();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,9 +48,18 @@ export function Navbar() {
         {/* Logo */}
         <Link
           href="#hero"
-          className="shrink-0 text-lg font-semibold tracking-tight text-brand"
+          className="flex shrink-0 items-center gap-2"
         >
-          aisitey
+          <Image
+            src="/aisitey-logo.png"
+            alt="aisitey logo"
+            width={28}
+            height={28}
+            className="rounded-lg"
+          />
+          <span className="text-lg font-semibold tracking-tight text-brand">
+            aisitey
+          </span>
         </Link>
 
         {/* Navigation */}
@@ -71,24 +83,36 @@ export function Navbar() {
             GitHub
           </Link>
 
-          {/* npm بالأحمر */}
           <a
-  href="https://www.npmjs.com/package/aisitey"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="shrink-0 text-sm font-bold text-red-500 transition-colors hover:text-red-600"
->
-  npm
-</a>
+            href="https://www.npmjs.com/package/aisitey"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shrink-0 text-sm font-bold text-red-500 transition-colors hover:text-red-600"
+          >
+            npm
+          </a>
         </div>
 
-        {/* CTA */}
-        <Link
-          href="#start"
-          className="ml-4 hidden shrink-0 rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark sm:block"
-        >
-          Get Started
-        </Link>
+        {/* Auth */}
+        <div className="ml-4 flex shrink-0 items-center gap-2">
+          {isSignedIn ? (
+            <UserButton />
+          ) : (
+            <>
+              <SignInButton mode="modal">
+                <button className="hidden rounded-xl px-4 py-2 text-sm font-medium text-copy-secondary transition-colors hover:text-brand sm:block">
+                  Sign In
+                </button>
+              </SignInButton>
+
+              <SignUpButton mode="modal">
+                <button className="rounded-xl bg-brand px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-dark">
+                  Get Started
+                </button>
+              </SignUpButton>
+            </>
+          )}
+        </div>
       </div>
     </nav>
   );
