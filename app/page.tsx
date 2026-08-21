@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/footer";
 import type { Metadata } from "next";
 import { Marquee } from "@/components/landing/marquee";
 import { Comparison } from "@/components/landing/comparison";
+import { SocialProof } from "@/components/landing/social-proof";
 
 export const metadata: Metadata = {
   title: "Build with Context, Not Chaos",
@@ -27,8 +28,14 @@ export default function Home() {
         {/* الشريط المتحرك */}
         <Marquee />
 
+        <SocialProof />
+
         <section id="how-it-works">
           <HowItWorks />
+        </section>
+
+        <section id="comparison">
+          <Comparison />
         </section>
 
         <section id="memory">
@@ -42,11 +49,6 @@ export default function Home() {
         <section id="start">
           <CTA />
         </section>
-
-        <section id="comparison">
-          <Comparison />
-        </section>
-
       </div>
       <Footer />
     </main>
