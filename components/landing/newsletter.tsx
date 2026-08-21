@@ -9,17 +9,42 @@ export function Newsletter() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  setIsLoading(true);
 
-    setIsLoading(false);
+  try {
+    const response = await fetch("/api/newsletter", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "Failed to subscribe");
+    }
+
+    console.log("Newsletter subscription:", result);
+
     setIsSubmitted(true);
     setEmail("");
-  };
+  } catch (error) {
+    console.error("Newsletter error:", error);
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Something went wrong. Please try again."
+    );
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <section className="px-6 py-16">
@@ -61,7 +86,7 @@ export function Newsletter() {
               >
                 <CheckCircle2 className="size-5 text-green-600" />
                 <p className="text-sm font-medium text-green-700">
-                  You're on the list! Check your inbox. 🎉
+                  You're subscribed! Thanks for joining us. 🎉
                 </p>
               </motion.div>
             ) : (
