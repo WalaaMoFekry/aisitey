@@ -9,6 +9,7 @@ const links = [
   { label: "How it works", href: "#how-it-works" },
   { label: "Memory", href: "#memory" },
   { label: "Human + AI", href: "#human-ai" },
+  { label: "Pricing", href: "/pricing" },
 ];
 
 export function Navbar() {

@@ -61,6 +61,13 @@ export function Footer() {
             >
               npm
             </a>
+
+            <Link
+              href="/pricing"
+              className="text-sm text-copy-secondary transition-colors hover:text-brand"
+            >
+              Pricing
+            </Link>
           </div>
         </div>
 
