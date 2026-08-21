@@ -6,6 +6,7 @@ import { HumanAI } from "@/components/landing/human-ai";
 import { CTA } from "@/components/landing/cta";
 import { Footer } from "@/components/layout/footer";
 import type { Metadata } from "next";
+import { Marquee } from "@/components/landing/marquee";
 
 export const metadata: Metadata = {
   title: "Build with Context, Not Chaos",
@@ -20,6 +21,10 @@ export default function Home() {
         <section id="hero">
           <Hero />
         </section>
+
+        {/* الشريط المتحرك */}
+        <Marquee />
+
 
         <section id="how-it-works">
           <HowItWorks />
