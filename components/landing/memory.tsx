@@ -46,7 +46,7 @@ const contextFiles = [
 
 export function Memory() {
   return (
-    <section className="px-6 py-32">
+    <section className="px-6 py-16">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
         <div className="mx-auto max-w-2xl text-center">

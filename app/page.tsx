@@ -9,6 +9,8 @@ import type { Metadata } from "next";
 import { Marquee } from "@/components/landing/marquee";
 import { Comparison } from "@/components/landing/comparison";
 import { SocialProof } from "@/components/landing/social-proof";
+import { Testimonials } from "@/components/landing/testimonials";
+import { Newsletter } from "@/components/landing/newsletter";
 
 export const metadata: Metadata = {
   title: "Build with Context, Not Chaos",
@@ -45,6 +47,10 @@ export default function Home() {
         <section id="human-ai">
           <HumanAI />
         </section>
+
+        <Testimonials />
+
+        <Newsletter />
 
         <section id="start">
           <CTA />

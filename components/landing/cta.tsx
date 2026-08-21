@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function CTA() {
   return (
-    <section className="px-6 py-32">
+    <section className="px-6 py-16">
       <div className="mx-auto max-w-5xl">
         <div className="relative overflow-hidden rounded-[2.5rem] border border-brand/20 bg-brand-soft px-6 py-20 text-center md:px-12">
           {/* Decorative elements */}
