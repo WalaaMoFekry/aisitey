@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
   --bg-base: #F7F6F3;
@@ -98,4 +99,15 @@ body {
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+.prose {
+  --tw-prose-body: var(--color-copy-secondary);
+  --tw-prose-headings: var(--color-copy-primary);
+  --tw-prose-bold: var(--color-copy-primary);
+  --tw-prose-links: var(--color-brand);
+  --tw-prose-code: var(--color-brand-dark);
+  --tw-prose-quotes: var(--color-copy-secondary);
+  --tw-prose-quote-borders: var(--color-default);
+  --tw-prose-hr: var(--color-default);
 }
