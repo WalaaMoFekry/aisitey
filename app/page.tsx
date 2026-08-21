@@ -7,10 +7,12 @@ import { CTA } from "@/components/landing/cta";
 import { Footer } from "@/components/layout/footer";
 import type { Metadata } from "next";
 import { Marquee } from "@/components/landing/marquee";
+import { FAQ } from "@/components/landing/faq";
 
 export const metadata: Metadata = {
   title: "Build with Context, Not Chaos",
-  description: "aisitey helps you turn ideas into real products with AI that understands your project context, architecture, and decisions.",
+  description:
+    "aisitey helps you turn ideas into real products with AI that understands your project context, architecture, and decisions.",
 };
 
 export default function Home() {
@@ -24,7 +26,6 @@ export default function Home() {
 
         {/* الشريط المتحرك */}
         <Marquee />
-
 
         <section id="how-it-works">
           <HowItWorks />
@@ -40,6 +41,10 @@ export default function Home() {
 
         <section id="start">
           <CTA />
+        </section>
+
+        <section id="faq">
+          <FAQ />
         </section>
       </div>
       <Footer />
