@@ -102,9 +102,6 @@ export default function PricingPage() {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <span className="text-sm font-medium tracking-wide text-brand">
-              PRICING
-            </span>
 
             <h1 className="mt-4 text-5xl font-semibold tracking-tight text-copy-primary md:text-6xl">
               Simple, transparent pricing.
@@ -160,7 +157,9 @@ export default function PricingPage() {
                     {plan.price}
                   </span>
                   {plan.period && (
-                    <span className="text-sm text-copy-muted">{plan.period}</span>
+                    <span className="text-sm text-copy-muted">
+                      {plan.period}
+                    </span>
                   )}
                 </div>
 
@@ -203,7 +202,7 @@ export default function PricingPage() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
+            viewport={{ once: false, margin: "-50px" }}
             transition={{ duration: 0.6 }}
             className="text-center"
           >
@@ -219,11 +218,11 @@ export default function PricingPage() {
             {faqs.map((faq, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-30px" }}
+                viewport={{ once: false, margin: "-30px" }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                className="rounded-2xl border border-default bg-surface p-6"
+                className="rounded-2xl border border-default bg-surface p-6 transition-all duration-200 hover:border-brand/20 hover:shadow-sm"
               >
                 <h3 className="text-base font-medium text-copy-primary">
                   {faq.question}

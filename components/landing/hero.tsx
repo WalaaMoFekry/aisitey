@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { FaGithub } from "react-icons/fa";
+import { Package } from "lucide-react";
 
 export function Hero() {
   return (
@@ -68,12 +70,15 @@ export function Hero() {
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            <Link
-              href="#how-it-works"
-              className="inline-block rounded-xl bg-brand px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-dark hover:shadow-lg hover:shadow-brand/25"
+            <a
+              href="https://github.com/WalaaMoFekry/aisitey"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-dark hover:shadow-lg hover:shadow-brand/25"
             >
-              See How It Works →
-            </Link>
+              <FaGithub className="size-4" />
+              View on GitHub
+            </a>
           </motion.div>
 
           <motion.div
@@ -81,12 +86,15 @@ export function Hero() {
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            <Link
-              href="#memory"
-              className="inline-block rounded-xl border border-default bg-surface px-6 py-3 text-sm font-medium text-copy-primary transition-colors hover:border-brand/30 hover:text-brand hover:shadow-lg hover:shadow-brand/10"
+            <a
+              href="https://www.npmjs.com/package/aisitey"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-default bg-surface px-6 py-3 text-sm font-medium text-copy-primary transition-colors hover:border-brand/30 hover:text-brand hover:shadow-lg hover:shadow-brand/10"
             >
-              View Project Memory
-            </Link>
+              <Package className="size-4" />
+              Quick Start
+            </a>
           </motion.div>
         </motion.div>
 

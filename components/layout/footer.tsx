@@ -1,5 +1,6 @@
-// components/layout/footer.tsx
 import Link from "next/link";
+import { BsTwitterX } from "react-icons/bs";
+import { FaGithub, FaLinkedin, FaYoutube } from "react-icons/fa";
 
 export function Footer() {
   return (
@@ -9,7 +10,7 @@ export function Footer() {
           {/* Brand */}
           <div>
             <Link
-              href="#hero"
+              href="/"
               className="text-xl font-semibold tracking-tight text-brand"
             >
               aisitey
@@ -24,34 +25,25 @@ export function Footer() {
           {/* Links */}
           <div className="flex flex-wrap gap-x-7 gap-y-3">
             <Link
-              href="#how-it-works"
+              href="/templates"
               className="text-sm text-copy-secondary transition-colors hover:text-brand"
             >
-              How it works
+              Templates
             </Link>
 
             <Link
-              href="#memory"
+              href="/pricing"
               className="text-sm text-copy-secondary transition-colors hover:text-brand"
             >
-              Memory
+              Pricing
             </Link>
 
             <Link
-              href="#human-ai"
+              href="/blog"
               className="text-sm text-copy-secondary transition-colors hover:text-brand"
             >
-              Human + AI
+              Blog
             </Link>
-
-            <a
-              href="https://github.com/WalaaMoFekry/aisitey"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-copy-secondary transition-colors hover:text-brand"
-            >
-              GitHub
-            </a>
 
             <a
               href="https://www.npmjs.com/package/aisitey"
@@ -61,32 +53,63 @@ export function Footer() {
             >
               npm
             </a>
-
-            <Link
-              href="/pricing"
-              className="text-sm text-copy-secondary transition-colors hover:text-brand"
-            >
-              Pricing
-            </Link>
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="mt-10 flex flex-col gap-3 border-t border-default pt-6 text-sm text-copy-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} aisitey.com All rights reserved.</p>
+        <div className="mt-10 flex flex-col gap-6 border-t border-default pt-6 sm:flex-row sm:items-center sm:justify-between">
+          {/* Copyright */}
+          <p className="text-sm text-copy-muted">
+            © {new Date().getFullYear()} aisitey.com All rights reserved.
+          </p>
 
-          <div className="flex gap-4">
-            <p>Built with AI. Directed by humans.</p>
-            <span className="hidden sm:inline">•</span>
+          {/* Social Links */}
+          <div className="flex items-center gap-4">
             <a
-              href="https://github.com/WalaaMoFekry/aisitey"
+              href="https://github.com/WalaaMoFekry"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-colors hover:text-brand"
+              className="flex size-9 items-center justify-center rounded-xl border border-default text-copy-secondary transition-all hover:border-brand/30 hover:text-brand hover:shadow-sm"
+              aria-label="GitHub"
             >
-              Open Source
+              <FaGithub className="size-4" />
+            </a>
+
+            <a
+              href="https://x.com/aisiteycom"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex size-9 items-center justify-center rounded-xl border border-default text-copy-secondary transition-all hover:border-brand/30 hover:text-brand hover:shadow-sm"
+              aria-label="X (Twitter)"
+            >
+              <BsTwitterX className="size-4" />
+            </a>
+
+            <a
+              href="https://www.youtube.com/@aisiteycom"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex size-9 items-center justify-center rounded-xl border border-default text-copy-secondary transition-all hover:border-brand/30 hover:text-brand hover:shadow-sm"
+              aria-label="YouTube"
+            >
+              <FaYoutube className="size-4" />
+            </a>
+
+            <a
+              href="https://www.linkedin.com/in/walaa-mohammed-88b51a319/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex size-9 items-center justify-center rounded-xl border border-default text-copy-secondary transition-all hover:border-brand/30 hover:text-brand hover:shadow-sm"
+              aria-label="LinkedIn"
+            >
+              <FaLinkedin className="size-4" />
             </a>
           </div>
+
+          {/* Tagline */}
+          <p className="text-sm text-copy-muted">
+            Built with AI. Directed by humans.
+          </p>
         </div>
       </div>
     </footer>
