@@ -7,7 +7,7 @@ import { CTA } from "@/components/landing/cta";
 import { Footer } from "@/components/layout/footer";
 import type { Metadata } from "next";
 import { Marquee } from "@/components/landing/marquee";
-import { FAQ } from "@/components/landing/faq";
+import { Comparison } from "@/components/landing/comparison";
 
 export const metadata: Metadata = {
   title: "Build with Context, Not Chaos",
@@ -43,9 +43,10 @@ export default function Home() {
           <CTA />
         </section>
 
-        <section id="faq">
-          <FAQ />
+        <section id="comparison">
+          <Comparison />
         </section>
+
       </div>
       <Footer />
     </main>

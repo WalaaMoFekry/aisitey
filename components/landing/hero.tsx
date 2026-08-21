@@ -1,50 +1,103 @@
-// components/landing/hero.tsx
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export function Hero() {
   return (
     <section className="relative flex min-h-[90vh] items-center justify-center px-6 pt-28">
       <div className="mx-auto w-full max-w-5xl text-center">
         {/* Eyebrow */}
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-default bg-surface px-4 py-2 text-sm text-copy-secondary">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, margin: "-50px" }}
+          transition={{ duration: 0.5 }}
+          className="mb-6 inline-flex items-center gap-2 rounded-full border border-default bg-surface px-4 py-2 text-sm text-copy-secondary"
+        >
           <span className="h-2 w-2 rounded-full bg-ai" />
           Context-driven AI development system
-        </div>
+        </motion.div>
 
         {/* Heading */}
-        <h1 className="mx-auto max-w-4xl text-5xl font-semibold tracking-tight text-copy-primary sm:text-6xl md:text-7xl">
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mx-auto max-w-4xl text-5xl font-semibold tracking-tight text-copy-primary sm:text-6xl md:text-7xl"
+        >
           Build with{" "}
-          <span className="text-brand">context</span>,
+          <span className="relative inline-block text-brand">
+            context,
+            <motion.span
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: false, margin: "-50px" }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="absolute bottom-2 left-0 h-3 w-full origin-left rounded-full bg-brand/20 -z-10"
+            />
+          </span>
           <br />
           not chaos.
-        </h1>
+        </motion.h1>
 
         {/* Description */}
-        <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-copy-secondary">
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-copy-secondary"
+        >
           aisitey gives your AI agents a complete project memory — context,
           architecture, standards, and workflow rules. So they build exactly
           what you need, nothing more, nothing less.
-        </p>
+        </motion.p>
 
         {/* CTA Buttons */}
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link
-            href="#how-it-works"
-            className="rounded-xl bg-brand px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
+        >
+          <motion.div
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            See How It Works →
-          </Link>
+            <Link
+              href="#how-it-works"
+              className="inline-block rounded-xl bg-brand px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-dark hover:shadow-lg hover:shadow-brand/25"
+            >
+              See How It Works →
+            </Link>
+          </motion.div>
 
-          <Link
-            href="#memory"
-            className="rounded-xl border border-default bg-surface px-6 py-3 text-sm font-medium text-copy-primary transition-colors hover:border-brand/30 hover:text-brand"
+          <motion.div
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
-            View Project Memory
-          </Link>
-        </div>
+            <Link
+              href="#memory"
+              className="inline-block rounded-xl border border-default bg-surface px-6 py-3 text-sm font-medium text-copy-primary transition-colors hover:border-brand/30 hover:text-brand hover:shadow-lg hover:shadow-brand/10"
+            >
+              View Project Memory
+            </Link>
+          </motion.div>
+        </motion.div>
 
         {/* Flow */}
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-3 text-sm text-copy-muted">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: false, margin: "-50px" }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-12 flex flex-wrap items-center justify-center gap-3 text-sm text-copy-muted"
+        >
           <span>Idea</span>
           <span>→</span>
           <span>Context Files</span>
@@ -52,7 +105,7 @@ export function Hero() {
           <span>AI Agent</span>
           <span>→</span>
           <span className="font-medium text-brand">Product</span>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
