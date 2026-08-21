@@ -49,10 +49,7 @@ export function Navbar() {
     >
       <div className="flex h-14 items-center rounded-2xl border border-default bg-surface/95 px-4 shadow-sm backdrop-blur-md">
         {/* Logo */}
-        <Link
-          href="/"
-          className="flex shrink-0 items-center gap-2"
-        >
+        <Link href="/" className="flex shrink-0 items-center gap-2">
           <Image
             src="/aisitey-logo.png"
             alt="aisitey logo"
@@ -93,7 +90,15 @@ export function Navbar() {
         {/* Auth */}
         <div className="ml-6 hidden shrink-0 items-center gap-3 lg:flex">
           {isSignedIn ? (
-            <UserButton />
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="hidden rounded-xl px-4 py-2 text-sm font-medium text-copy-secondary transition-colors hover:text-brand sm:block"
+              >
+                Dashboard
+              </Link>
+              <UserButton />
+            </div>
           ) : (
             <>
               <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
@@ -131,6 +136,13 @@ export function Navbar() {
 
             {isSignedIn ? (
               <div className="px-4 py-2">
+                <Link
+                  href="/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block rounded-xl px-4 py-2.5 text-sm font-medium text-brand hover:bg-brand-soft"
+                >
+                  Dashboard
+                </Link>
                 <UserButton />
               </div>
             ) : (
