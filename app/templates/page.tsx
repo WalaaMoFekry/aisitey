@@ -3,10 +3,18 @@
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { FileText, Download, Copy, Check, Eye, ArrowRight, MoreVertical, X } from "lucide-react";
+import {
+  FileText,
+  Download,
+  Copy,
+  Check,
+  Eye,
+  ArrowRight,
+  MoreVertical,
+  X,
+} from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { SiAnthropic, SiCursor } from "react-icons/si";
 
 import { BsOpenai, BsClaude } from "react-icons/bs";
 
@@ -15,28 +23,32 @@ const templates = [
     id: "project-overview",
     name: "project-overview.md",
     role: "What you're building",
-    description: "Defines your project's goals, core user flow, features, and scope.",
+    description:
+      "Defines your project's goals, core user flow, features, and scope.",
     color: "bg-blue-50 text-blue-600",
   },
   {
     id: "architecture",
     name: "architecture.md",
     role: "How it's built",
-    description: "Specifies your tech stack, system boundaries, data model, and domain entities.",
+    description:
+      "Specifies your tech stack, system boundaries, data model, and domain entities.",
     color: "bg-purple-50 text-purple-600",
   },
   {
     id: "ui-context",
     name: "ui-context.md",
     role: "How it looks",
-    description: "Defines design tokens, typography, layout patterns, and component rules.",
+    description:
+      "Defines design tokens, typography, layout patterns, and component rules.",
     color: "bg-pink-50 text-pink-600",
   },
   {
     id: "code-standards",
     name: "code-standards.md",
     role: "How code is written",
-    description: "Sets coding conventions, validation rules, error handling, and file organization.",
+    description:
+      "Sets coding conventions, validation rules, error handling, and file organization.",
     color: "bg-green-50 text-green-600",
   },
   {
@@ -67,32 +79,39 @@ export default function TemplatesPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [previewContent, setPreviewContent] = useState<string>("");
-  const menuRef = useRef<HTMLDivElement>(null);
+
+  // One ref PER template, keyed by id — fixes the bug where a single
+  // shared ref only ever pointed at the last card in the list, causing
+  // the "click outside" handler to close every other card's dropdown
+  // before its buttons could register a click.
+  const menuRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      if (!menuOpenId) return;
+      const currentMenuEl = menuRefs.current.get(menuOpenId);
+      if (currentMenuEl && !currentMenuEl.contains(event.target as Node)) {
         setMenuOpenId(null);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [menuOpenId]);
 
   const handlePreview = async (id: string) => {
     if (expandedId === id) {
       setExpandedId(null);
       return;
     }
-    
+
     try {
       const response = await fetch(`/api/templates/${id}`);
       const data = await response.json();
       setPreviewContent(data.content);
       setExpandedId(id);
     } catch (error) {
-      console.error('Failed to load preview:', error);
+      console.error("Failed to load preview:", error);
     }
   };
 
@@ -100,50 +119,68 @@ export default function TemplatesPage() {
     try {
       const response = await fetch(`/api/templates/${id}`);
       const data = await response.json();
+
       await navigator.clipboard.writeText(data.content);
+
       setCopiedId(id);
       setMenuOpenId(null);
       setTimeout(() => setCopiedId(null), 2000);
     } catch (error) {
-      console.error('Failed to copy:', error);
+      console.error("Copy error:", error);
     }
   };
 
   const openInChatGPT = async (id: string, name: string) => {
+    // ChatGPT has no URL parameter for pre-filling a prompt (unlike Claude),
+    // so we have to copy the prompt to the clipboard instead. The Clipboard
+    // API requires the document to still be focused — opening a new window
+    // first would shift focus away and make writeText() throw. So here we
+    // do the copy FIRST, then open the window. This means window.open runs
+    // slightly later than the click itself, so as a safety net we detect
+    // whether the popup got blocked and let the user know the prompt was
+    // still copied successfully.
+    setMenuOpenId(null);
+
     try {
       const response = await fetch(`/api/templates/${id}`);
       const data = await response.json();
-      const prompt = `Here's my ${name} template:\n\n${data.content}\n\nPlease help me fill this out for my project.`;
-      window.open(`https://chat.openai.com/?prompt=${encodeURIComponent(prompt)}`, "_blank");
-      setMenuOpenId(null);
+
+      const prompt = `Help me fill out this aisitey template (${name}):\n\n${data.content}`;
+
+      await navigator.clipboard.writeText(prompt);
+
+      const newWindow = window.open("https://chatgpt.com", "_blank");
+
+      if (newWindow) {
+        alert("Prompt copied! Paste it (Ctrl+V) into the ChatGPT chat box.");
+      } else {
+        alert("Prompt copied! Your browser blocked the popup — please open chatgpt.com and paste it in.");
+      }
     } catch (error) {
-      console.error('Failed to open:', error);
+      console.error("Failed to open in ChatGPT:", error);
     }
   };
 
   const openInClaude = async (id: string, name: string) => {
+    const newWindow = window.open("about:blank", "_blank");
+    setMenuOpenId(null);
+
     try {
       const response = await fetch(`/api/templates/${id}`);
       const data = await response.json();
-      const prompt = `Here's my ${name} template:\n\n${data.content}\n\nPlease help me fill this out for my project.`;
-      window.open(`https://claude.ai/new?q=${encodeURIComponent(prompt)}`, "_blank");
-      setMenuOpenId(null);
+
+      const prompt = `I'm looking at this aisitey template: ${name}.\n\n${data.content}\n\nHelp me fill this out for my project.`;
+
+      if (newWindow) {
+        newWindow.location.href = `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
+      }
     } catch (error) {
-      console.error('Failed to open:', error);
+      console.error("Failed to open in Claude:", error);
+      newWindow?.close();
     }
   };
 
-  const openInCursor = async (id: string, name: string) => {
-    try {
-      const response = await fetch(`/api/templates/${id}`);
-      const data = await response.json();
-      const prompt = `Here's my ${name} template:\n\n${data.content}`;
-      window.open(`https://cursor.com/new?prompt=${encodeURIComponent(prompt)}`, "_blank");
-      setMenuOpenId(null);
-    } catch (error) {
-      console.error('Failed to open:', error);
-    }
-  };
+
 
   return (
     <main className="flex min-h-screen flex-col bg-base">
@@ -158,10 +195,6 @@ export default function TemplatesPage() {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <span className="text-sm font-medium tracking-wide text-brand">
-              TEMPLATES
-            </span>
-
             <h1 className="mt-4 text-5xl font-semibold tracking-tight text-copy-primary md:text-6xl">
               Seven files. Complete context.
             </h1>
@@ -187,7 +220,9 @@ export default function TemplatesPage() {
               >
                 {/* File Icon */}
                 <div className="flex items-center justify-between">
-                  <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${template.color}`}>
+                  <div
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${template.color}`}
+                  >
                     <FileText className="size-5" />
                   </div>
 
@@ -201,10 +236,21 @@ export default function TemplatesPage() {
                       <Eye className="size-4" />
                     </button>
 
-                    {/* Dropdown Menu */}
-                    <div className="relative" ref={menuRef}>
+                    {/* Dropdown Menu — each item gets its own ref via the
+                        callback below, stored in the menuRefs Map keyed
+                        by this template's id */}
+                    <div
+                      className="relative"
+                      ref={(el) => {
+                        menuRefs.current.set(template.id, el);
+                      }}
+                    >
                       <button
-                        onClick={() => setMenuOpenId(menuOpenId === template.id ? null : template.id)}
+                        onClick={() =>
+                          setMenuOpenId(
+                            menuOpenId === template.id ? null : template.id,
+                          )
+                        }
                         className="flex size-9 items-center justify-center rounded-xl border border-default text-copy-muted transition-colors hover:border-brand/30 hover:text-brand"
                         aria-label="More options"
                       >
@@ -238,7 +284,9 @@ export default function TemplatesPage() {
 
                           {/* Open in ChatGPT */}
                           <button
-                            onClick={() => openInChatGPT(template.id, template.name)}
+                            onClick={() =>
+                              openInChatGPT(template.id, template.name)
+                            }
                             className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm text-copy-secondary transition-colors hover:bg-subtle hover:text-brand"
                           >
                             <BsOpenai className="size-4" />
@@ -247,21 +295,14 @@ export default function TemplatesPage() {
 
                           {/* Open in Claude */}
                           <button
-                            onClick={() => openInClaude(template.id, template.name)}
+                            onClick={() =>
+                              openInClaude(template.id, template.name)
+                            }
                             className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm text-copy-secondary transition-colors hover:bg-subtle hover:text-brand"
                           >
                             <BsClaude className="size-4 text-orange-500" />
                             Open in Claude
-                          </button>
-
-                          {/* Open in Cursor */}
-                          <button
-                            onClick={() => openInCursor(template.id, template.name)}
-                            className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm text-copy-secondary transition-colors hover:bg-subtle hover:text-brand"
-                          >
-                            <SiCursor className="size-4" />
-                            Open in Cursor
-                          </button>
+                          </button>                          
                         </motion.div>
                       )}
                     </div>
@@ -327,7 +368,9 @@ export default function TemplatesPage() {
               Use the CLI to generate all context files in one command.
             </p>
             <div className="mt-6 inline-block rounded-xl bg-surface border border-default p-4">
-              <code className="text-sm text-brand">npm install -g aisitey && aisitey init</code>
+              <code className="text-sm text-brand">
+                npm install -g aisitey && aisitey init
+              </code>
             </div>
           </motion.div>
         </div>
