@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import {
@@ -20,26 +20,60 @@ import {
 import { toast } from "sonner";
 
 const steps = [
-  { id: 1, title: "Overview", file: "project-overview.md", icon: <FolderTree className="size-5" /> },
-  { id: 2, title: "Architecture", file: "architecture.md", icon: <Code2 className="size-5" /> },
-  { id: 3, title: "UI Context", file: "ui-context.md", icon: <FileText className="size-5" /> },
-  { id: 4, title: "Code Standards", file: "code-standards.md", icon: <FileText className="size-5" /> },
-  { id: 5, title: "AI Workflow", file: "ai-workflow-rules.md", icon: <Sparkles className="size-5" /> },
-  { id: 6, title: "Memory", file: "memory.md", icon: <Target className="size-5" /> },
-  { id: 7, title: "Progress", file: "progress-tracker.md", icon: <Check className="size-5" /> },
+  {
+    id: 1,
+    title: "Overview",
+    file: "project-overview.md",
+    icon: <FolderTree className="size-5" />,
+  },
+  {
+    id: 2,
+    title: "Architecture",
+    file: "architecture.md",
+    icon: <Code2 className="size-5" />,
+  },
+  {
+    id: 3,
+    title: "UI Context",
+    file: "ui-context.md",
+    icon: <FileText className="size-5" />,
+  },
+  {
+    id: 4,
+    title: "Code Standards",
+    file: "code-standards.md",
+    icon: <FileText className="size-5" />,
+  },
+  {
+    id: 5,
+    title: "AI Workflow",
+    file: "ai-workflow-rules.md",
+    icon: <Sparkles className="size-5" />,
+  },
+  {
+    id: 6,
+    title: "Memory",
+    file: "memory.md",
+    icon: <Target className="size-5" />,
+  },
+  {
+    id: 7,
+    title: "Progress",
+    file: "progress-tracker.md",
+    icon: <Check className="size-5" />,
+  },
 ];
-
 
 export default function WizardPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const stepFromUrl = searchParams.get("step");
+  const projectIdFromUrl = searchParams.get("project_id");
 
-  // Tracks whether the initial load-from-localStorage has finished.
-  // No save effect is allowed to run until this is true — this is what
-  // prevents the race condition that was wiping out saved data.
-  const [isLoaded, setIsLoaded] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [savedProjectId, setSavedProjectId] = useState<string | null>(null);
   const [completedFiles, setCompletedFiles] = useState<string[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -55,11 +89,27 @@ export default function WizardPage() {
   // ============ Load everything once, on mount ============
   useEffect(() => {
     const savedStep = localStorage.getItem("aisitey-wizard-step");
-    if (savedStep) {
+    const savedData = localStorage.getItem("aisitey-wizard-data");
+    const savedProjectId = localStorage.getItem("aisitey-wizard-project-id");
+    const savedCompletedFiles = localStorage.getItem(
+      "aisitey-wizard-completed-files",
+    );
+
+    // الـ step من الـ URL أولاً
+    if (stepFromUrl) {
+      setCurrentStep(parseInt(stepFromUrl));
+    } else if (savedStep) {
       setCurrentStep(parseInt(savedStep));
     }
 
-    const savedData = localStorage.getItem("aisitey-wizard-data");
+    // الـ project id من الـ URL أولاً
+    if (projectIdFromUrl) {
+      setSavedProjectId(projectIdFromUrl);
+    } else if (savedProjectId) {
+      setSavedProjectId(savedProjectId);
+    }
+
+    // البيانات
     if (savedData) {
       try {
         setFormData(JSON.parse(savedData));
@@ -68,10 +118,17 @@ export default function WizardPage() {
       }
     }
 
-    // Only now is it safe for the save effects below to start writing —
-    // both loads above have already been applied to state.
+    // الملفات المكتملة
+    if (savedCompletedFiles) {
+      try {
+        setCompletedFiles(JSON.parse(savedCompletedFiles));
+      } catch (error) {
+        console.error("Failed to parse completed files:", error);
+      }
+    }
+
     setIsLoaded(true);
-  }, []);
+  }, [stepFromUrl, projectIdFromUrl]);
 
   // ============ Save step — only after the initial load ============
   useEffect(() => {
@@ -84,6 +141,23 @@ export default function WizardPage() {
     if (!isLoaded) return;
     localStorage.setItem("aisitey-wizard-data", JSON.stringify(formData));
   }, [formData, isLoaded]);
+
+  // Save project id
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (savedProjectId) {
+      localStorage.setItem("aisitey-wizard-project-id", savedProjectId);
+    }
+  }, [savedProjectId, isLoaded]);
+
+  // Save completed files
+  useEffect(() => {
+    if (!isLoaded) return;
+    localStorage.setItem(
+      "aisitey-wizard-completed-files",
+      JSON.stringify(completedFiles),
+    );
+  }, [completedFiles, isLoaded]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -113,109 +187,104 @@ export default function WizardPage() {
     }
   };
 
-const handleGenerate = async () => {
-  setIsLoading(true);
+  const handleGenerate = async () => {
+    setIsLoading(true);
 
-  try {
-    const response = await fetch("/api/generate-context", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...formData,
-        fileType: currentStep === 1 ? "project-overview" : 
-                  currentStep === 2 ? "architecture" : 
-                  currentStep === 3 ? "ui-context" :
-                  currentStep === 4 ? "code-standards" :
-                  currentStep === 5 ? "ai-workflow-rules" :
-                  currentStep === 6 ? "memory" : "progress-tracker",
-      }),
-    });
+    try {
+      const fileType =
+        currentStep === 1
+          ? "project-overview"
+          : currentStep === 2
+            ? "architecture"
+            : currentStep === 3
+              ? "ui-context"
+              : currentStep === 4
+                ? "code-standards"
+                : currentStep === 5
+                  ? "ai-workflow-rules"
+                  : currentStep === 6
+                    ? "memory"
+                    : "progress-tracker";
 
-    const data = await response.json();
-
-    if (!data.success) {
-      throw new Error(data.error || "Failed to generate");
-    }
-
-    toast.success(`${data.file.name} generated!`, {
-      description: "File downloaded successfully.",
-    });
-
-    // Save project first (if not saved yet)
-    let projectId = savedProjectId;
-
-    if (!projectId) {
-      const saveResponse = await fetch("/api/projects", {
+      const response = await fetch("/api/generate-context", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: formData.name,
-          description: formData.overview,
-          tech_stack: "Custom",
+          ...formData,
+          fileType,
         }),
       });
 
-      const saveData = await saveResponse.json();
+      const data = await response.json();
 
-      if (saveResponse.ok && saveData.project) {
-        projectId = saveData.project.id;
-        setSavedProjectId(projectId);
+      if (!data.success) {
+        throw new Error(data.error || "Failed to generate");
       }
-    }
 
-    // Save wizard progress
-    if (projectId) {
-      const newCompletedFiles = [...completedFiles, data.file.name];
-      setCompletedFiles(newCompletedFiles);
-
-      await fetch("/api/wizard-progress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          project_id: projectId,
-          current_step: currentStep + 1,
-          completed_files: newCompletedFiles,
-        }),
+      toast.success(`${data.file.name} generated!`, {
+        description: "File downloaded successfully.",
       });
-    }
 
-    // Download the file
-    const blob = new Blob([data.file.content], { type: 'text/markdown' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = data.file.name;
-    a.click();
-    window.URL.revokeObjectURL(url);
+      // Save project (لو لسه محفظناش)
+      let projectId = savedProjectId;
 
-    // Move to next wizard
-    if (currentStep < 7) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      toast.success("All files generated!", {
-        description: "Your complete context is ready.",
+      if (!projectId) {
+        const saveResponse = await fetch("/api/projects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.name,
+            description: formData.overview,
+            tech_stack: "Custom",
+          }),
+        });
+
+        const saveData = await saveResponse.json();
+
+        if (saveResponse.ok && saveData.project) {
+          projectId = saveData.project.id;
+          setSavedProjectId(projectId);
+        }
+      }
+
+      // Save wizard progress
+      if (projectId) {
+        const newCompletedFiles = [...completedFiles, data.file.name];
+        setCompletedFiles(newCompletedFiles);
+
+        await fetch("/api/wizard-progress", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            project_id: projectId,
+            current_step: currentStep + 1,
+            completed_files: newCompletedFiles,
+          }),
+        });
+      }
+
+      // Download the file
+      const blob = new Blob([data.file.content], { type: "text/markdown" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = data.file.name;
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      // Redirect to project page
+      if (projectId) {
+        router.push(`/dashboard/projects/${projectId}`);
+      }
+    } catch (error) {
+      toast.error("Failed to generate", {
+        description:
+          error instanceof Error ? error.message : "Please try again.",
       });
+    } finally {
+      setIsLoading(false);
     }
-    if (currentStep < 7) {
-  setCurrentStep(currentStep + 1);
-} else {
-  toast.success("All files generated!", {
-    description: "Your complete context is ready.",
-  });
-}
-
-// ✅ أضف redirect للمشروع:
-if (projectId) {
-  router.push(`/dashboard/projects/${projectId}`);
-}
-  } catch (error) {
-    toast.error("Failed to generate", {
-      description: error instanceof Error ? error.message : "Please try again.",
-    });
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   return (
     <main className="flex min-h-screen flex-col bg-base">
@@ -241,11 +310,9 @@ if (projectId) {
                       step.icon
                     )}
                   </div>
-                  {step.id < 5 && (
+                  {step.id < steps.length && (
                     <div
-                      className={`h-0.5 w-8 md:w-16 ${
-                        currentStep > step.id ? "bg-brand" : "bg-default"
-                      }`}
+                      className={`h-0.5 w-8 md:w-16 ${currentStep > step.id ? "bg-brand" : "bg-default"}`}
                     />
                   )}
                 </div>
@@ -253,7 +320,8 @@ if (projectId) {
             </div>
             <div className="mt-4 text-center">
               <p className="text-sm font-medium text-brand">
-                Step {currentStep} of 5: {steps[currentStep - 1].title}
+                Step {currentStep} of {steps.length}:{" "}
+                {steps[currentStep - 1].title}
               </p>
             </div>
           </div>
