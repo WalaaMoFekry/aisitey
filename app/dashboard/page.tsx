@@ -101,7 +101,7 @@ export default async function DashboardPage() {
               </Link>
 
               <Link
-                href="/dashboard/templates"
+                href="/templates"
                 className="group rounded-3xl border border-default bg-surface p-7 transition-all duration-200 hover:-translate-y-1 hover:border-brand/30 hover:shadow-sm"
               >
                 <div className="flex items-center justify-between">
