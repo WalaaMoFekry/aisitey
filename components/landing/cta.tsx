@@ -26,19 +26,19 @@ export function CTA() {
 
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
-                href="#memory"
+                href="/templates"
                 className="rounded-xl bg-brand px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-dark"
               >
-                View the Files →
+                View the Templates →
               </Link>
 
               <a
-                href="https://github.com/WalaaMoFekry/aisitey"
+                href="https://github.com/WalaaMoFekry/aisitey/tree/main/contexts"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-xl border border-default bg-surface px-6 py-3 text-sm font-medium text-copy-primary transition-colors hover:border-brand/30 hover:text-brand"
               >
-                Get on GitHub
+                View on GitHub
               </a>
             </div>
           </div>
