@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/layout/navbar";
@@ -10,132 +10,161 @@ import {
   ArrowRight,
   Check,
   FolderTree,
-  Code2,
   FileText,
   Target,
   Sparkles,
-  Download,
+  Plus,
+  X,
+  Code2,
 } from "lucide-react";
-import Link from "next/link";
 import { toast } from "sonner";
 
 const steps = [
-  { id: 1, title: "Project Info", icon: <FolderTree className="size-5" /> },
-  { id: 2, title: "Goals", icon: <Target className="size-5" /> },
-  { id: 3, title: "Features", icon: <Sparkles className="size-5" /> },
-  { id: 4, title: "Scope", icon: <FileText className="size-5" /> },
-  { id: 5, title: "Tech Stack", icon: <Code2 className="size-5" /> },
-  { id: 6, title: "Generate", icon: <Check className="size-5" /> },
+  { id: 1, title: "Overview", file: "project-overview.md", icon: <FolderTree className="size-5" /> },
+  { id: 2, title: "Architecture", file: "architecture.md", icon: <Code2 className="size-5" /> },
+  { id: 3, title: "UI Context", file: "ui-context.md", icon: <FileText className="size-5" /> },
+  { id: 4, title: "Code Standards", file: "code-standards.md", icon: <FileText className="size-5" /> },
+  { id: 5, title: "AI Workflow", file: "ai-workflow-rules.md", icon: <Sparkles className="size-5" /> },
+  { id: 6, title: "Memory", file: "memory.md", icon: <Target className="size-5" /> },
+  { id: 7, title: "Progress", file: "progress-tracker.md", icon: <Check className="size-5" /> },
 ];
 
-const techStacks = [
-  "Next.js + TypeScript",
-  "Vue 3 + TypeScript",
-  "React + TypeScript",
-  "Laravel",
-  "Flutter",
-  "Node.js + Express",
-  "Custom",
-];
 
 export default function WizardPage() {
   const router = useRouter();
+
+  // Tracks whether the initial load-from-localStorage has finished.
+  // No save effect is allowed to run until this is true — this is what
+  // prevents the race condition that was wiping out saved data.
+  const [isLoaded, setIsLoaded] = useState(false);
+
   const [currentStep, setCurrentStep] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
-    goals: ["", "", ""],
-    features: [""],
+    overview: "",
+    goals: [""],
+    coreFlow: [""],
+    features: [{ category: "", items: [""] }],
     inScope: [""],
     outScope: [""],
-    tech_stack: "",
+    successCriteria: [""],
   });
-  const [generatedFiles, setGeneratedFiles] = useState<string[]>([]);
-  const [, setPreviewFile] = useState<any | null>(null);
 
-  const handleNext = () => {
-    if (currentStep < 6) {
+  // ============ Load everything once, on mount ============
+  useEffect(() => {
+    const savedStep = localStorage.getItem("aisitey-wizard-step");
+    if (savedStep) {
+      setCurrentStep(parseInt(savedStep));
+    }
+
+    const savedData = localStorage.getItem("aisitey-wizard-data");
+    if (savedData) {
+      try {
+        setFormData(JSON.parse(savedData));
+      } catch (error) {
+        console.error("Failed to parse saved data:", error);
+      }
+    }
+
+    // Only now is it safe for the save effects below to start writing —
+    // both loads above have already been applied to state.
+    setIsLoaded(true);
+  }, []);
+
+  // ============ Save step — only after the initial load ============
+  useEffect(() => {
+    if (!isLoaded) return;
+    localStorage.setItem("aisitey-wizard-step", currentStep.toString());
+  }, [currentStep, isLoaded]);
+
+  // ============ Save formData — only after the initial load ============
+  useEffect(() => {
+    if (!isLoaded) return;
+    localStorage.setItem("aisitey-wizard-data", JSON.stringify(formData));
+  }, [formData, isLoaded]);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Check if current step is valid
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 1:
+        return formData.name.trim() !== "" && formData.overview.trim() !== "";
+      case 2:
+        return (
+          formData.goals.some((g) => g.trim() !== "") &&
+          formData.coreFlow.some((c) => c.trim() !== "")
+        );
+      case 3:
+        return formData.features.some(
+          (f) =>
+            f.category.trim() !== "" && f.items.some((i) => i.trim() !== ""),
+        );
+      case 4:
+        return (
+          formData.inScope.some((s) => s.trim() !== "") &&
+          formData.outScope.some((s) => s.trim() !== "") &&
+          formData.successCriteria.some((s) => s.trim() !== "")
+        );
+      default:
+        return false;
+    }
+  };
+
+const handleGenerate = async () => {
+  setIsLoading(true);
+
+  try {
+    const response = await fetch("/api/generate-context", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...formData,
+        fileType: currentStep === 1 ? "project-overview" : 
+                  currentStep === 2 ? "architecture" : 
+                  currentStep === 3 ? "ui-context" :
+                  currentStep === 4 ? "code-standards" :
+                  currentStep === 5 ? "ai-workflow-rules" :
+                  currentStep === 6 ? "memory" : "progress-tracker",
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.error || "Failed to generate");
+    }
+
+    toast.success(`${data.file.name} generated!`, {
+      description: "File downloaded successfully.",
+    });
+
+    // Download
+    const blob = new Blob([data.file.content], { type: 'text/markdown' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = data.file.name;
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    // Move to next wizard
+    if (currentStep < 7) {
       setCurrentStep(currentStep + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const handleGenerate = async () => {
-    setIsLoading(true);
-
-    try {
-      // 1. Generate context files
-      const response = await fetch("/api/generate-context", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to generate");
-      }
-
-      setGeneratedFiles(data.files);
-
-      // 2. Save project to Supabase
-      const saveResponse = await fetch("/api/projects", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          description: formData.description,
-          tech_stack: formData.tech_stack,
-        }),
-      });
-
-      if (!saveResponse.ok) {
-        console.warn("Failed to save project");
-      }
-
-      toast.success("Context generated!", {
-        description: "Your 7 context files are ready.",
-      });
-    } catch (error) {
-      toast.error("Failed to generate", {
-        description:
-          error instanceof Error ? error.message : "Please try again.",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDownloadAll = async () => {
-    try {
-      const response = await fetch("/api/download-all", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) throw new Error("Download failed");
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${formData.name || "project"}-context.zip`;
-      a.click();
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      toast.error("Download failed", {
-        description: "Please try again.",
+    } else {
+      toast.success("All files generated!", {
+        description: "Your complete context is ready.",
       });
     }
-  };
+  } catch (error) {
+    toast.error("Failed to generate", {
+      description: error instanceof Error ? error.message : "Please try again.",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <main className="flex min-h-screen flex-col bg-base">
@@ -161,7 +190,7 @@ export default function WizardPage() {
                       step.icon
                     )}
                   </div>
-                  {step.id < 6 && (
+                  {step.id < 5 && (
                     <div
                       className={`h-0.5 w-8 md:w-16 ${
                         currentStep > step.id ? "bg-brand" : "bg-default"
@@ -173,7 +202,7 @@ export default function WizardPage() {
             </div>
             <div className="mt-4 text-center">
               <p className="text-sm font-medium text-brand">
-                Step {currentStep} of 6: {steps[currentStep - 1].title}
+                Step {currentStep} of 5: {steps[currentStep - 1].title}
               </p>
             </div>
           </div>
@@ -187,12 +216,10 @@ export default function WizardPage() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Step 1: Project Info */}
+              {/* Step 1: Overview */}
               {currentStep === 1 && (
                 <div className="space-y-6">
-                  <h2 className="text-2xl font-semibold">
-                    Tell us about your project
-                  </h2>
+                  <h2 className="text-2xl font-semibold">Project Overview</h2>
                   <div>
                     <label className="mb-2 block text-sm font-medium">
                       Project Name
@@ -203,36 +230,31 @@ export default function WizardPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
                       }
-                      placeholder="e.g. My SaaS Platform"
+                      placeholder="[Project Name]"
                       className="w-full rounded-xl border border-default bg-surface px-5 py-3.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
                     />
                   </div>
                   <div>
                     <label className="mb-2 block text-sm font-medium">
-                      Description
+                      Overview
                     </label>
                     <textarea
-                      value={formData.description}
+                      value={formData.overview}
                       onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          description: e.target.value,
-                        })
+                        setFormData({ ...formData, overview: e.target.value })
                       }
-                      placeholder="What does this project do?"
-                      rows={4}
+                      placeholder="Write your project overview to describing what this application does, who it's for, and what problem it solves."
+                      rows={5}
                       className="w-full resize-none rounded-xl border border-default bg-surface px-5 py-3.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
                     />
                   </div>
                 </div>
               )}
 
-              {/* Step 2: Goals */}
+              {/* Step 2: Goals & Flow */}
               {currentStep === 2 && (
                 <div className="space-y-6">
-                  <h2 className="text-2xl font-semibold">
-                    What are your main goals?
-                  </h2>
+                  <h2 className="text-2xl font-semibold">Goals</h2>
                   {formData.goals.map((goal, index) => (
                     <div key={index} className="flex gap-2">
                       <input
@@ -244,95 +266,202 @@ export default function WizardPage() {
                           setFormData({ ...formData, goals: newGoals });
                         }}
                         placeholder={`Goal ${index + 1}`}
-                        className="flex-1 rounded-xl border border-default bg-surface px-5 py-3.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+                        className="flex-1 rounded-xl border border-default bg-surface px-5 py-3.5 text-sm outline-none focus:border-brand"
                       />
-                      <button
-                        onClick={() => {
-                          const newGoals = [...formData.goals, ""];
-                          setFormData({ ...formData, goals: newGoals });
-                        }}
-                        className="rounded-xl border border-default px-4 text-brand hover:border-brand/30"
-                      >
-                        +
-                      </button>
+                      {formData.goals.length > 1 && (
+                        <button
+                          onClick={() => {
+                            const newGoals = formData.goals.filter(
+                              (_, i) => i !== index,
+                            );
+                            setFormData({ ...formData, goals: newGoals });
+                          }}
+                          className="rounded-xl border border-default px-4 text-red-400"
+                        >
+                          <X className="size-4" />
+                        </button>
+                      )}
                     </div>
                   ))}
+                  <button
+                    onClick={() => {
+                      const newGoals = [...formData.goals, ""];
+                      setFormData({ ...formData, goals: newGoals });
+                    }}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-brand"
+                  >
+                    <Plus className="size-4" />
+                    Add Goal
+                  </button>
+
+                  <h2 className="text-2xl font-semibold mt-8">
+                    Core User Flow
+                  </h2>
+                  {formData.coreFlow.map((step, index) => (
+                    <div key={index} className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={step}
+                        onChange={(e) => {
+                          const newFlow = [...formData.coreFlow];
+                          newFlow[index] = e.target.value;
+                          setFormData({ ...formData, coreFlow: newFlow });
+                        }}
+                        placeholder={`Step ${index + 1}`}
+                        className="flex-1 rounded-xl border border-default bg-surface px-5 py-3.5 text-sm outline-none focus:border-brand"
+                      />
+                      {formData.coreFlow.length > 1 && (
+                        <button
+                          onClick={() => {
+                            const newFlow = formData.coreFlow.filter(
+                              (_, i) => i !== index,
+                            );
+                            setFormData({ ...formData, coreFlow: newFlow });
+                          }}
+                          className="rounded-xl border border-default px-4 text-red-400"
+                        >
+                          <X className="size-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      const newFlow = [...formData.coreFlow, ""];
+                      setFormData({ ...formData, coreFlow: newFlow });
+                    }}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-brand"
+                  >
+                    <Plus className="size-4" />
+                    Add Step
+                  </button>
                 </div>
               )}
 
               {/* Step 3: Features */}
               {currentStep === 3 && (
                 <div className="space-y-6">
-                  <h2 className="text-2xl font-semibold">
-                    What features do you need?
-                  </h2>
-                  {formData.features.map((feature, index) => (
-                    <div key={index} className="flex gap-2">
-                      <input
-                        type="text"
-                        value={feature}
-                        onChange={(e) => {
-                          const newFeatures = [...formData.features];
-                          newFeatures[index] = e.target.value;
-                          setFormData({ ...formData, features: newFeatures });
-                        }}
-                        placeholder={`Feature ${index + 1}`}
-                        className="flex-1 rounded-xl border border-default bg-surface px-5 py-3.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
-                      />
+                  <h2 className="text-2xl font-semibold">Features</h2>
+                  {formData.features.map((feature, featureIndex) => (
+                    <div
+                      key={featureIndex}
+                      className="rounded-2xl border border-default bg-surface p-5"
+                    >
+                      <div className="flex gap-2 mb-3">
+                        <input
+                          type="text"
+                          value={feature.category}
+                          onChange={(e) => {
+                            const newFeatures = [...formData.features];
+                            newFeatures[featureIndex].category = e.target.value;
+                            setFormData({ ...formData, features: newFeatures });
+                          }}
+                          placeholder="Feature Category"
+                          className="flex-1 rounded-xl border border-default px-4 py-2.5 text-sm outline-none focus:border-brand"
+                        />
+                        <button
+                          onClick={() => {
+                            const newFeatures = formData.features.filter(
+                              (_, i) => i !== featureIndex,
+                            );
+                            setFormData({ ...formData, features: newFeatures });
+                          }}
+                          className="rounded-xl border border-default px-3 text-red-400"
+                        >
+                          <X className="size-4" />
+                        </button>
+                      </div>
+                      {feature.items.map((item, itemIndex) => (
+                        <input
+                          key={itemIndex}
+                          type="text"
+                          value={item}
+                          onChange={(e) => {
+                            const newFeatures = [...formData.features];
+                            newFeatures[featureIndex].items[itemIndex] =
+                              e.target.value;
+                            setFormData({ ...formData, features: newFeatures });
+                          }}
+                          placeholder={`Feature description ${itemIndex + 1}`}
+                          className="w-full rounded-xl border border-default px-4 py-2.5 text-sm outline-none focus:border-brand mb-2"
+                        />
+                      ))}
                       <button
                         onClick={() => {
-                          const newFeatures = [...formData.features, ""];
+                          const newFeatures = [...formData.features];
+                          newFeatures[featureIndex].items.push("");
                           setFormData({ ...formData, features: newFeatures });
                         }}
-                        className="rounded-xl border border-default px-4 text-brand hover:border-brand/30"
+                        className="inline-flex items-center gap-2 text-xs font-medium text-brand"
                       >
-                        +
+                        <Plus className="size-3.5" />
+                        Add Feature
                       </button>
                     </div>
                   ))}
+                  <button
+                    onClick={() => {
+                      const newFeatures = [
+                        ...formData.features,
+                        { category: "", items: [""] },
+                      ];
+                      setFormData({ ...formData, features: newFeatures });
+                    }}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-brand"
+                  >
+                    <Plus className="size-4" />
+                    Add Category
+                  </button>
                 </div>
               )}
 
               {/* Step 4: Scope */}
               {currentStep === 4 && (
                 <div className="space-y-6">
-                  <h2 className="text-2xl font-semibold">Define your scope</h2>
-                  <div>
-                    <label className="mb-2 block text-sm font-medium">
-                      In Scope
-                    </label>
-                    {formData.inScope.map((item, index) => (
-                      <div key={index} className="flex gap-2 mb-2">
-                        <input
-                          type="text"
-                          value={item}
-                          onChange={(e) => {
-                            const newItems = [...formData.inScope];
-                            newItems[index] = e.target.value;
-                            setFormData({ ...formData, inScope: newItems });
-                          }}
-                          placeholder="What you're building"
-                          className="flex-1 rounded-xl border border-default bg-surface px-5 py-3.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
-                        />
+                  <h2 className="text-2xl font-semibold">In Scope</h2>
+                  {formData.inScope.map((item, index) => (
+                    <div key={index} className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={item}
+                        onChange={(e) => {
+                          const newItems = [...formData.inScope];
+                          newItems[index] = e.target.value;
+                          setFormData({ ...formData, inScope: newItems });
+                        }}
+                        placeholder="What you are building"
+                        className="flex-1 rounded-xl border border-default bg-surface px-5 py-3.5 text-sm outline-none focus:border-brand"
+                      />
+                      {formData.inScope.length > 1 && (
                         <button
                           onClick={() => {
-                            const newItems = [...formData.inScope, ""];
+                            const newItems = formData.inScope.filter(
+                              (_, i) => i !== index,
+                            );
                             setFormData({ ...formData, inScope: newItems });
                           }}
-                          className="rounded-xl border border-default px-4 text-brand hover:border-brand/30"
+                          className="rounded-xl border border-default px-4 text-red-400"
                         >
-                          +
+                          <X className="size-4" />
                         </button>
-                      </div>
-                    ))}
-                  </div>
-                  <div>
-                    <label className="mb-2 block text-sm font-medium">
-                      Out of Scope
-                    </label>
-                    {formData.outScope.map((item, index) => (
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      const newItems = [...formData.inScope, ""];
+                      setFormData({ ...formData, inScope: newItems });
+                    }}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-brand"
+                  >
+                    <Plus className="size-4" />
+                    Add In Scope
+                  </button>
+
+                  <h2 className="text-2xl font-semibold mt-8">Out of Scope</h2>
+                  {formData.outScope.map((item, index) => (
+                    <div key={index} className="flex gap-2 mb-2">
                       <input
-                        key={index}
                         type="text"
                         value={item}
                         onChange={(e) => {
@@ -340,42 +469,87 @@ export default function WizardPage() {
                           newItems[index] = e.target.value;
                           setFormData({ ...formData, outScope: newItems });
                         }}
-                        placeholder="What you're NOT building"
-                        className="mb-2 w-full rounded-xl border border-default bg-surface px-5 py-3.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+                        placeholder="What you are not building"
+                        className="flex-1 rounded-xl border border-default bg-surface px-5 py-3.5 text-sm outline-none focus:border-brand"
                       />
-                    ))}
-                  </div>
-                </div>
-              )}
+                      {formData.outScope.length > 1 && (
+                        <button
+                          onClick={() => {
+                            const newItems = formData.outScope.filter(
+                              (_, i) => i !== index,
+                            );
+                            setFormData({ ...formData, outScope: newItems });
+                          }}
+                          className="rounded-xl border border-default px-4 text-red-400"
+                        >
+                          <X className="size-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      const newItems = [...formData.outScope, ""];
+                      setFormData({ ...formData, outScope: newItems });
+                    }}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-brand"
+                  >
+                    <Plus className="size-4" />
+                    Add Out of Scope
+                  </button>
 
-              {/* Step 5: Tech Stack */}
-              {currentStep === 5 && (
-                <div className="space-y-6">
-                  <h2 className="text-2xl font-semibold">
-                    Choose your tech stack
+                  <h2 className="text-2xl font-semibold mt-8">
+                    Success Criteria
                   </h2>
-                  <div className="grid gap-3">
-                    {techStacks.map((stack) => (
-                      <button
-                        key={stack}
-                        onClick={() =>
-                          setFormData({ ...formData, tech_stack: stack })
-                        }
-                        className={`rounded-xl border px-5 py-3.5 text-sm text-left transition-all ${
-                          formData.tech_stack === stack
-                            ? "border-brand bg-brand-soft text-brand font-medium"
-                            : "border-default bg-surface text-copy-primary hover:border-brand/30"
-                        }`}
-                      >
-                        {stack}
-                      </button>
-                    ))}
-                  </div>
+                  {formData.successCriteria.map((item, index) => (
+                    <div key={index} className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={item}
+                        onChange={(e) => {
+                          const newItems = [...formData.successCriteria];
+                          newItems[index] = e.target.value;
+                          setFormData({
+                            ...formData,
+                            successCriteria: newItems,
+                          });
+                        }}
+                        placeholder={`Condition ${index + 1}`}
+                        className="flex-1 rounded-xl border border-default bg-surface px-5 py-3.5 text-sm outline-none focus:border-brand"
+                      />
+                      {formData.successCriteria.length > 1 && (
+                        <button
+                          onClick={() => {
+                            const newItems = formData.successCriteria.filter(
+                              (_, i) => i !== index,
+                            );
+                            setFormData({
+                              ...formData,
+                              successCriteria: newItems,
+                            });
+                          }}
+                          className="rounded-xl border border-default px-4 text-red-400"
+                        >
+                          <X className="size-4" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => {
+                      const newItems = [...formData.successCriteria, ""];
+                      setFormData({ ...formData, successCriteria: newItems });
+                    }}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-brand"
+                  >
+                    <Plus className="size-4" />
+                    Add Criterion
+                  </button>
                 </div>
               )}
 
-              {/* Step 6: Generate */}
-              {currentStep === 6 && (
+              {/* Step 5: Generate */}
+              {currentStep === 5 && (
                 <div className="space-y-6">
                   <h2 className="text-2xl font-semibold">Ready to generate!</h2>
                   <div className="rounded-2xl border border-default bg-surface p-6">
@@ -383,67 +557,9 @@ export default function WizardPage() {
                       {formData.name || "Your Project"}
                     </h3>
                     <p className="mt-2 text-sm text-copy-secondary">
-                      {formData.description}
-                    </p>
-                    <p className="mt-2 text-sm text-copy-secondary">
-                      {formData.tech_stack}
+                      {formData.overview}
                     </p>
                   </div>
-
-                  {generatedFiles.length > 0 && (
-                    <div className="space-y-4">
-                      <div className="rounded-2xl border border-green-500/30 bg-green-50 p-4">
-                        <p className="text-sm font-medium text-green-700">
-                          ✅ Context generated successfully!
-                        </p>
-                      </div>
-
-                      {/* Files list */}
-                      <div className="space-y-2">
-                        {generatedFiles.map((file: any) => (
-                          <div
-                            key={file.name}
-                            className="rounded-xl border border-default bg-surface p-4 flex items-center justify-between"
-                          >
-                            <span className="text-sm font-mono">
-                              {file.name}
-                            </span>
-                            <button
-                              onClick={() => {
-                                // Preview file
-                                setPreviewFile(file);
-                              }}
-                              className="text-sm text-brand hover:text-brand-dark"
-                            >
-                              Preview
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Download button */}
-                      <button
-                        onClick={handleDownloadAll}
-                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-medium text-white hover:bg-brand-dark"
-                      >
-                        <Download className="size-4" />
-                        Download All Files
-                      </button>
-
-                      {/* Open in AI */}
-                      <div className="grid gap-2 md:grid-cols-3">
-                        <button className="rounded-xl border border-default px-4 py-2.5 text-sm">
-                          🤖 ChatGPT
-                        </button>
-                        <button className="rounded-xl border border-default px-4 py-2.5 text-sm">
-                          🧠 Claude
-                        </button>
-                        <button className="rounded-xl border border-default px-4 py-2.5 text-sm">
-                          💬 Cursor
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
             </motion.div>
@@ -452,7 +568,7 @@ export default function WizardPage() {
           {/* Navigation Buttons */}
           <div className="mt-12 flex items-center justify-between">
             <button
-              onClick={handleBack}
+              onClick={() => setCurrentStep(currentStep - 1)}
               disabled={currentStep === 1}
               className="inline-flex items-center gap-2 rounded-xl border border-default px-5 py-2.5 text-sm font-medium text-copy-primary disabled:opacity-30"
             >
@@ -460,10 +576,11 @@ export default function WizardPage() {
               Back
             </button>
 
-            {currentStep < 6 ? (
+            {currentStep < 5 ? (
               <button
-                onClick={handleNext}
-                className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-dark"
+                onClick={() => setCurrentStep(currentStep + 1)}
+                disabled={!isStepValid()}
+                className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Next
                 <ArrowRight className="size-4" />
@@ -474,17 +591,8 @@ export default function WizardPage() {
                 disabled={isLoading}
                 className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-dark disabled:opacity-50"
               >
-                {isLoading ? (
-                  <>
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                    Generating...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="size-4" />
-                    Generate Context
-                  </>
-                )}
+                {isLoading ? "Generating..." : "Generate"}
+                <Sparkles className="size-4" />
               </button>
             )}
           </div>
