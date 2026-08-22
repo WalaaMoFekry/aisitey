@@ -37,8 +37,9 @@ export default function WizardPage() {
   // No save effect is allowed to run until this is true — this is what
   // prevents the race condition that was wiping out saved data.
   const [isLoaded, setIsLoaded] = useState(false);
-
   const [currentStep, setCurrentStep] = useState(1);
+  const [savedProjectId, setSavedProjectId] = useState<string | null>(null);
+  const [completedFiles, setCompletedFiles] = useState<string[]>([]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -140,7 +141,45 @@ const handleGenerate = async () => {
       description: "File downloaded successfully.",
     });
 
-    // Download
+    // Save project first (if not saved yet)
+    let projectId = savedProjectId;
+
+    if (!projectId) {
+      const saveResponse = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.overview,
+          tech_stack: "Custom",
+        }),
+      });
+
+      const saveData = await saveResponse.json();
+
+      if (saveResponse.ok && saveData.project) {
+        projectId = saveData.project.id;
+        setSavedProjectId(projectId);
+      }
+    }
+
+    // Save wizard progress
+    if (projectId) {
+      const newCompletedFiles = [...completedFiles, data.file.name];
+      setCompletedFiles(newCompletedFiles);
+
+      await fetch("/api/wizard-progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          project_id: projectId,
+          current_step: currentStep + 1,
+          completed_files: newCompletedFiles,
+        }),
+      });
+    }
+
+    // Download the file
     const blob = new Blob([data.file.content], { type: 'text/markdown' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -157,6 +196,18 @@ const handleGenerate = async () => {
         description: "Your complete context is ready.",
       });
     }
+    if (currentStep < 7) {
+  setCurrentStep(currentStep + 1);
+} else {
+  toast.success("All files generated!", {
+    description: "Your complete context is ready.",
+  });
+}
+
+// ✅ أضف redirect للمشروع:
+if (projectId) {
+  router.push(`/dashboard/projects/${projectId}`);
+}
   } catch (error) {
     toast.error("Failed to generate", {
       description: error instanceof Error ? error.message : "Please try again.",
