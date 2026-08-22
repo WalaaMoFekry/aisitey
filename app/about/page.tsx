@@ -29,7 +29,7 @@ export default function AboutPage() {
             {/* Avatar */}
             <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-3xl border-4 border-brand/20">
               <Image
-                src="/images/walaa.png"
+                src="/walaa.png"
                 alt="Walaa MoFekry"
                 fill
                 className="object-cover"
