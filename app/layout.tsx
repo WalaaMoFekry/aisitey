@@ -3,8 +3,9 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "@/components/ui/sonner";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +22,8 @@ export const metadata: Metadata = {
     default: "aisitey - Build with Context, Not Chaos",
     template: "%s | aisitey",
   },
-  description: "Turn your ideas into real products with AI that understands your project context. Structured files guide AI agents to build exactly what you need — faster, cheaper, and without losing track of decisions.",
+  description:
+    "Turn your ideas into real products with AI that understands your project context. Structured files guide AI agents to build exactly what you need — faster, cheaper, and without losing track of decisions.",
   keywords: [
     "AI development",
     "context-driven development",
@@ -43,7 +45,8 @@ export const metadata: Metadata = {
     url: "https://aisitey.com",
     siteName: "aisitey",
     title: "aisitey - Build with Context, Not Chaos",
-    description: "Turn your ideas into real products with AI that understands your project context. Structured files guide AI agents to build exactly what you need.",
+    description:
+      "Turn your ideas into real products with AI that understands your project context. Structured files guide AI agents to build exactly what you need.",
     images: [
       {
         url: "/aisitey-logo.png",
@@ -56,7 +59,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "aisitey - Build with Context, Not Chaos",
-    description: "Turn your ideas into real products with AI that understands your project context.",
+    description:
+      "Turn your ideas into real products with AI that understands your project context.",
     images: ["/aisitey-logo.png"],
   },
   robots: {
@@ -76,7 +80,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        "font-sans",
+        inter.variable,
+      )}
     >
       <body className="min-h-full">
         <ClerkProvider
@@ -84,6 +95,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           signUpFallbackRedirectUrl="/dashboard"
         >
           {children}
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              style: {
+                background: "var(--bg-surface)",
+                color: "var(--text-black)",
+                border: "1px solid var(--border-default)",
+                borderRadius: "12px",
+                padding: "12px 16px",
+                fontSize: "14px",
+              },
+            }}
+          />
         </ClerkProvider>
       </body>
     </html>

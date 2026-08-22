@@ -17,6 +17,8 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 
 import { BsOpenai, BsClaude } from "react-icons/bs";
+import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const templates = [
   {
@@ -79,6 +81,7 @@ export default function TemplatesPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [previewContent, setPreviewContent] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // One ref PER template, keyed by id — fixes the bug where a single
   // shared ref only ever pointed at the last card in the list, causing
@@ -125,6 +128,9 @@ export default function TemplatesPage() {
       setCopiedId(id);
       setMenuOpenId(null);
       setTimeout(() => setCopiedId(null), 2000);
+      toast.success("Copied to clipboard!", {
+        description: "Template content has been copied.",
+      });
     } catch (error) {
       console.error("Copy error:", error);
     }
@@ -154,7 +160,9 @@ export default function TemplatesPage() {
       if (newWindow) {
         alert("Prompt copied! Paste it (Ctrl+V) into the ChatGPT chat box.");
       } else {
-        alert("Prompt copied! Your browser blocked the popup — please open chatgpt.com and paste it in.");
+        alert(
+          "Prompt copied! Your browser blocked the popup — please open chatgpt.com and paste it in.",
+        );
       }
     } catch (error) {
       console.error("Failed to open in ChatGPT:", error);
@@ -179,8 +187,6 @@ export default function TemplatesPage() {
       newWindow?.close();
     }
   };
-
-
 
   return (
     <main className="flex min-h-screen flex-col bg-base">
@@ -302,7 +308,7 @@ export default function TemplatesPage() {
                           >
                             <BsClaude className="size-4 text-orange-500" />
                             Open in Claude
-                          </button>                          
+                          </button>
                         </motion.div>
                       )}
                     </div>
@@ -332,9 +338,19 @@ export default function TemplatesPage() {
                     transition={{ duration: 0.3 }}
                     className="mt-4 overflow-hidden rounded-2xl bg-subtle p-4"
                   >
-                    <pre className="max-h-64 overflow-y-auto text-xs text-copy-secondary whitespace-pre-wrap">
-                      {previewContent}
-                    </pre>
+                    {isLoading ? (
+                      <div className="space-y-3">
+                        <Skeleton className="h-3 w-full" />
+                        <Skeleton className="h-3 w-5/6" />
+                        <Skeleton className="h-3 w-4/6" />
+                        <Skeleton className="h-3 w-full" />
+                        <Skeleton className="h-3 w-2/3" />
+                      </div>
+                    ) : (
+                      <pre className="max-h-64 overflow-y-auto text-xs text-copy-secondary whitespace-pre-wrap">
+                        {previewContent}
+                      </pre>
+                    )}
                   </motion.div>
                 )}
 

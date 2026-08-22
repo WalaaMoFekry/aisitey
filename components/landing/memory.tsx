@@ -1,4 +1,8 @@
-// components/landing/memory.tsx
+"use client";
+
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useEffect, useState } from "react";
+
 const contextFiles = [
   {
     name: "project-overview.md",
@@ -45,6 +49,18 @@ const contextFiles = [
 ];
 
 export function Memory() {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 100, damping: 20 });
+  const springY = useSpring(mouseY, { stiffness: 100, damping: 20 });
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
+
   return (
     <section className="px-6 py-16">
       <div className="mx-auto max-w-5xl">
@@ -76,7 +92,7 @@ export function Memory() {
               {contextFiles.map((file) => (
                 <div
                   key={file.name}
-                  className="flex items-center gap-3 rounded-xl border border-default bg-surface px-4 py-3"
+                  className="flex items-center gap-3 rounded-xl border border-default bg-surface px-4 py-3 transition-all duration-300 hover:border-brand/30 hover:shadow-sm"
                 >
                   <span className="text-sm">📄</span>
                   <div className="flex-1">
@@ -91,26 +107,41 @@ export function Memory() {
           </div>
         </div>
 
-        {/* Context cards */}
+        {/* Context cards with light effect */}
         <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {contextFiles.map((file) => (
             <div
               key={file.name}
-              className="rounded-3xl border border-default bg-surface p-7"
+              onMouseMove={handleMouseMove}
+              onMouseEnter={() => setHoveredCard(file.name)}
+              onMouseLeave={() => setHoveredCard(null)}
+              className="group relative overflow-hidden rounded-3xl border border-default bg-surface p-7 transition-all duration-300 hover:-translate-y-1 hover:border-brand/30 hover:shadow-lg"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand">
-                📄
+              {/* Light follows mouse */}
+              {hoveredCard === file.name && (
+                <motion.div
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background: `radial-gradient(200px circle at ${springX}px ${springY}px, rgba(61,59,110,0.12), transparent 80%)`,
+                  }}
+                />
+              )}
+
+              <div className="relative z-10">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand">
+                  📄
+                </div>
+
+                <h3 className="mt-6 font-mono text-sm font-semibold text-copy-primary">
+                  {file.name}
+                </h3>
+
+                <p className="mt-2 text-sm font-medium text-brand">{file.role}</p>
+
+                <p className="mt-3 text-sm leading-6 text-copy-secondary">
+                  {file.description}
+                </p>
               </div>
-
-              <h3 className="mt-6 font-mono text-sm font-semibold text-copy-primary">
-                {file.name}
-              </h3>
-
-              <p className="mt-2 text-sm font-medium text-brand">{file.role}</p>
-
-              <p className="mt-3 text-sm leading-6 text-copy-secondary">
-                {file.description}
-              </p>
             </div>
           ))}
         </div>
