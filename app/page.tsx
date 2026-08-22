@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 import { Marquee } from "@/components/landing/marquee";
 import { Comparison } from "@/components/landing/comparison";
 import { SocialProof } from "@/components/landing/social-proof";
-import { Testimonials } from "@/components/landing/testimonials";
+import { WhyAisitey } from "@/components/landing/why-aisitey";
 import { Newsletter } from "@/components/landing/newsletter";
 
 export const metadata: Metadata = {
@@ -18,7 +18,8 @@ export const metadata: Metadata = {
     "aisitey helps you turn ideas into real products with AI that understands your project context, architecture, and decisions.",
 };
 
-export default function Home() {
+export default async function Home() {
+
   return (
     <main className="flex min-h-screen flex-col bg-base">
       <Navbar />
@@ -48,7 +49,7 @@ export default function Home() {
           <HumanAI />
         </section>
 
-        <Testimonials />
+        <WhyAisitey />
 
         <Newsletter />
 

@@ -45,6 +45,13 @@ export function Footer() {
               Blog
             </Link>
 
+            <Link
+              href="/privacy-policy"
+              className="text-sm text-copy-secondary transition-colors hover:text-brand"
+            >
+              Privecy Policy
+            </Link>
+
             <a
               href="https://www.npmjs.com/package/aisitey"
               target="_blank"

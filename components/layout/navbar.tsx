@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
+import {
+  SignInButton,
+  SignUpButton,
+  useAuth,
+  UserButton,
+  useUser,
+} from "@clerk/nextjs";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { motion } from "framer-motion";
@@ -19,7 +25,7 @@ export function Navbar() {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState<string | null>(null);
-  const { isSignedIn } = useUser();
+  const { isSignedIn } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,7 +60,10 @@ export function Navbar() {
     >
       <div className="flex h-14 items-center rounded-2xl border border-default bg-surface/95 px-4 shadow-sm backdrop-blur-md">
         {/* Logo */}
-        <Link href="/" className="flex shrink-0 items-center gap-2 group">
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2 group"
+        >
           <motion.div
             whileHover={{ rotate: 10, scale: 1.1 }}
             transition={{ type: "spring", stiffness: 300 }}
@@ -71,7 +80,6 @@ export function Navbar() {
             aisitey
           </span>
         </Link>
-
         {/* Desktop Navigation */}
         <div className="ml-8 hidden min-w-0 flex-1 items-center gap-7 lg:flex">
           {links.map((link) => (
