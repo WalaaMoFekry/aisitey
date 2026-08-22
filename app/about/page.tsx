@@ -2,6 +2,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { FaGithub, FaLinkedin } from "react-icons/fa6";
 import { BsTwitterX } from "react-icons/bs";
+import Image from "next/image";
 
 export const metadata = {
   title: "About | aisitey",
@@ -26,8 +27,13 @@ export default function AboutPage() {
 
           <div className="mt-16 flex flex-col items-center gap-8 md:flex-row md:items-start">
             {/* Avatar */}
-            <div className="flex h-32 w-32 shrink-0 items-center justify-center rounded-3xl bg-brand-soft text-4xl font-semibold text-brand">
-              WM
+            <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-3xl border-4 border-brand/20">
+              <Image
+                src="/images/walaa.png"
+                alt="Walaa MoFekry"
+                fill
+                className="object-cover"
+              />
             </div>
 
             <div className="text-center md:text-left">
