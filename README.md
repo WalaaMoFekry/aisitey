@@ -68,7 +68,7 @@ Contributions are welcome! Feel free to:
 
 ## 📄 License
 
-MIT License - see LICENSE for details.
+MIT License - see [LICENSE](LICENSE) for details.
 
 ## 🌐 Links
 
